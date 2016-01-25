@@ -30,7 +30,7 @@ for (i, training_data) in enumerate(training_data):
 # for letter in letters_list_training: print letter.value
 
 # shuffle training data
-####random.shuffle(letters_list_training)
+random.shuffle(letters_list_training)
 # for letter in letters_list_training: print letter.bias_input_plus_attributes
 # for ltr in letters_list_training: print ltr.attributes
 
