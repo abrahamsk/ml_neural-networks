@@ -9,6 +9,8 @@ import sys
 import math
 import numpy as np
 from input import letters_list_training
+# preprocessing to scale training data
+from sklearn import preprocessing
 
 # Neural network to recognize letters
 # after training with the UCI machine learning repository.
@@ -22,7 +24,31 @@ def sigmoid(z):
 # training data as a 10000x17 matrix seeded with letter attributes
 X = np.full( (len(letters_list_training),17), [ltr.bias_input_plus_attributes for ltr in letters_list_training] )
 # print X.shape
-# print X
+print X
+
+# preprocessing: scale the training data
+# to have zero mean and unit variance along each column (feature)
+
+#print X.mean(axis=0) # get mean of each column
+# print X[1:].mean(axis=0)
+# # standard deviation of columns
+# print X[1:].std(0)
+# # don't include column 1 (bias inputs) in the preprocessing
+# X_scaled = (X - X[1:].mean(axis=0) / X[1:].std(0))
+# print X_scaled
+# # getting divide by 0 errors with this method, using scikit implementation
+
+# preprocessing using sklearn package, returns array
+# scaled to be Gaussian with zero mean and unit variance
+# only scale columns 2-17, don't include bias input column
+X_scaled = preprocessing.scale(X[1:])
+#X_scaled = preprocessing.scale(X)
+# X = scale( X, axis=0, with_mean=True, with_std=True, copy=True )
+print X_scaled
+
+# the preprocessing module  provides a utility class StandardScaler
+# that implements the Transformer API to compute the mean and standard deviation
+#  on a training set so you can reapply the same transformation on the testing set.
 
 # run training examples through neural net to train for letter recognition
 #######
