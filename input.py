@@ -4,7 +4,7 @@
 # HW 2: Neural Networks
 # Katie Abrahams, abrahake@pdx.edu
 # 1/28/16
-import string
+import random
 from letter import letter
 
 # process data from file
@@ -28,6 +28,11 @@ for (i, training_data) in enumerate(training_data):
 
 # print letters_list_training[0].value
 # for letter in letters_list_training: print letter.value
+
+# shuffle training data
+random.shuffle(letters_list_training)
+# for letter in letters_list_training: print letter.bias_input_plus_attributes
+# for ltr in letters_list_training: print ltr.attributes
 
 # create a list of letters from testing data
 letters_list_testing = []
