@@ -18,13 +18,33 @@ import random
 # Network has 16 inputs (mapping to the 16 attributes of the letters in the data set)
 # one layer of hidden units, and 26 output units (for 26 classes of letters)
 
+################
+# Experiment 1 #
+################
 
 ###############
 # function defs
 ###############
 # sigmoid activation function for neurons
-def sigmoid(z):
-  return 1 / (1+math.exp(-z)) # math.exp returns e**z
+# The derivative of the sigmoid activation function is easily expressed in terms of the function itself:
+# d sigma(z)/dz = sigma(z)x(1 - sigma(z))
+# This is useful in deriving the back-propagation algorithm
+# If derivative argument is true, return the derivative of the sigmoid
+def sigmoid(z, derivative):
+    if derivative:
+        return sigmoid(z) * (1-sigmoid(z))
+    else: # derivative is False
+        return 1 / (1+np.exp(-z))
+
+#################
+# hyperparameters
+#################
+# learning rate
+eta = 0.3
+# momentum
+alpha = 0.3
+# number of hidden units
+n = 4
 
 #################
 # data structures
@@ -60,7 +80,7 @@ X_scaled = preprocessing.scale(X_attributes)
 bias_input = np.full((len(letters_list_training), 1), 1.0)
 ##print bias_input
 X = np.concatenate((bias_input, X_scaled), axis=1)
-print X
+# print X
 #print X.shape
 
 # The preprocessing module provides a utility class StandardScaler
@@ -71,28 +91,42 @@ print X
 # Initial weights matrix
 # Weight matrices have the same number of rows as units in the previous layer
 # and the same number of columns as units in the next layer
-# initial_weights= np.full( (17,4), random.uniform(-.25, .25) )
-initial_weights = np.random.uniform(low= -.25, high= .25, size=(17,4) )
+# n is the number of hidden units
+initial_weights = np.random.uniform(low= -.25, high= .25, size=(17,n) )
 # print initial_weights
 # print initial_weights.shape
 
 
 
-
-
-
-#######
+######
 # main
-#######
+######
 # run training examples through neural net to train for letter recognition
+# Classification with a two-layer neural network (Forward propagation)
+# For two-layer networks (one hidden layer):
+# I. For each test example:
+#     1. Present input to the input layer.
+#     2. Forward propagate the activations times the weights to each node in the hidden layer.
+#     3. Forward propagate the activations times weights from the hidden layer to the output layer.
+#     4. Interpret the output layer as a classification.
+increment = 0
+epoch = 5
 
-# increment = 0
-# run = [1, 2, 3, 4, 5]
-#
-# for i in run:
-#     text = "\rTesting instance "+str((increment)+1)+"/"+str(len(run))
-#     sys.stdout.write(text)
-#
-    ## change weights after each training example
+for iter in xrange(epoch):
+    text = "\rEpoch "+str((increment)+1)+"/"+str(epoch)
+    sys.stdout.write(text)
 
-#     increment += 1
+    # forward propagation
+    # initial run of data, use sigmoid activation function
+    # pass in dot products of inputs and weights
+    # output is a 10000x4 matrix
+    hidden_layer = sigmoid(np.dot(X, initial_weights), False)
+    # print hidden_layer
+    # print hidden_layer.shape
+
+    # calculate error
+
+
+    # change weights after each training example
+
+    increment += 1
