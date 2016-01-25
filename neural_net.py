@@ -19,30 +19,10 @@ from input import letters_list_training
 def sigmoid(z):
   return 1 / (1+math.exp(-z)) # math.exp returns e**z
 
-
-#print len(letters_list_training)
-
-
-# X = np.array([len(letters_list_training)][17])
-# X.shape = (len(letters_list_training),17)
-# for ltr in letters_list_training:
-# X = np.full( (len(letters_list_training),17), letters_list_training[i].bias_input_plus_attributes)
-
-# create empty np array of size 10000x17
-# X = np.zeros((len(letters_list_training),17))
-# # fill array with list comprehension
-# X = [ltr.bias_input_plus_attributes for ltr in letters_list_training]
-
-# input training data as a 10000x17 matrix seeded with letter attributes
+# training data as a 10000x17 matrix seeded with letter attributes
 X = np.full( (len(letters_list_training),17), [ltr.bias_input_plus_attributes for ltr in letters_list_training] )
-
-# bar = []
-# for item in some_iterable:
-#     bar.append(SOME EXPRESSION)
-#
-# X = [SOME EXPRESSION for item in some_iterable]
-
-print X
+# print X.shape
+# print X
 
 # run training examples through neural net to train for letter recognition
 #######
