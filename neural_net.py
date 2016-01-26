@@ -79,11 +79,13 @@ X_scaled = preprocessing.scale(X_attributes)
 #print X_scaled
 
 # Concatenate scaled data with the 1s needed for bias inputs
+# put bias input at the end so we don't need to worry about indexing
+# when going from hidden -> output layer
 bias_input = np.full((len(letters_list_training), 1), 1.0)
-print bias_input.shape
-X = np.concatenate((bias_input, X_scaled), axis=1)
+###print bias_input.shape
+X = np.concatenate((X_scaled, bias_input), axis=1)
 #print X
-print X.shape
+###print X.shape
 
 # transpose row vector to column vector
 # by casting array to matrix then transposing
@@ -101,14 +103,27 @@ print X.shape
 # see scikit-learn.org/stable/modules/preprocessing.html
 
 # Initial weights matrix
-# Weight matrices have the same number of rows as units in the previous layer
-# and the same number of columns as units in the next layer
+# Weight matrices have the same number of columns as units in the previous layer
+# and the same number of rows as units in the next layer
 # n is the number of hidden units
-initial_weights = np.random.uniform(low= -.25, high= .25, size=(17,n) )
+initial_weights = np.random.uniform(low= -.25, high= .25, size=(n,17) )
 # print initial_weights
-# print initial_weights.shape
+###print initial_weights.shape
 
+# output layer
+# 4x26 matrix, for 4 units in hidden layer and 26 letters in the alphabet
+# target for properly identified letter is .9, and the rest of the units should be .1
+####Y = np.full( (4,26), np.random.uniform(low= .1, high= .9, size=(4,26) ) )
+#print Y.shape #4x26
 
+# weights from hidden layer to output layer
+# 5 columns to allow for bias input
+hidden_to_output_weights = np.random.uniform(low= -.25, high= .25, size=(26,5) )
+
+# output matrix
+# don't initialize to anything
+# target for properly identified letter is .9, and the rest of the units should be .1
+Y = np.full((1, 26), None)
 
 ######
 # main
@@ -135,22 +150,52 @@ for iter in xrange(epoch):
 
     # iterate through data matrix to operate on individual training instances
     for row in X[0:2]:
-        print "\n----New row----", row #instance i vector
-        # forward propagation
-        # initial run of data, use sigmoid activation function
-        # pass in dot products of inputs and weights
-        ## hidden_layer = sigmoid(np.dot(i.T, initial_weights), False)
-        # print hidden_layer.shape
-
+        print "\n----New row in input matrix----"#, row #instance i vector
         # transpose row vector for matrix multiplication
-        print row.shape
+        ##print row.shape
         X_row = np.mat(row)
-        print X_row.shape
+        #print X_row.shape
         X_col = X_row.transpose()
         # # X[0,:][np.newaxis, :].T
         # # X[0,:][None].T
-        print X_col.shape
-        print X_col
+        ###print X_col.shape
+        ##print X_col
+
+        # forward propagation
+        # initial run of data, use sigmoid activation function
+        # pass in dot products of inputs and weights
+        hidden_layer = sigmoid(np.dot(initial_weights, X_col), False)
+        print hidden_layer # 4x1
+
+        # hidden_layer matrix is the activation at the hidden layer
+        # use hidden layer activations as input for the output layer
+
+    # use hidden layer activations to get activations for output layer
+    # for output_row in hidden_layer:
+    #     print output_row.shape
+    #     print "++++New row in output matrix++++"
+    #     Y_row = np.mat(output_row)
+    #     print Y_row.shape #1x26
+
+        ###output_layer = sigmoid(np.dot(hidden_to_output_weights, Y_row), False)
+        #print output_layer.shape #4x26
+
+    # use hidden layer activations to get activations for output layer
+    # append one row of 1s to hidden layer to allow for bias input
+    bias_input_hidden_layer = np.full((1, 1), 1.0)
+    #print bias_input_hidden_layer
+    hidden_layer_concat = np.concatenate((hidden_layer, bias_input_hidden_layer), axis=0)
+    #print hidden_layer_concat
+
+    # matrix multiply (hidden layer) dot (weights from hidden -> output)
+    output_layer = np.dot(hidden_to_output_weights, hidden_layer_concat)
+    ####print output_layer.shape #26x1
+
+    # apply sigmoid function to output layer
+    # to get activations at output layer
+    Y = sigmoid(output_layer, False)
+    ####print "output results", Y
+    ####print "Y shape", Y.shape #26x1
 
         # calculate error
 
