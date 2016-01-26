@@ -126,7 +126,6 @@ for iter in xrange(epoch):
 
     # calculate error
 
-
     # change weights after each training example
 
     increment += 1
