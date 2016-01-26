@@ -22,6 +22,16 @@ import random
 # Experiment 1 #
 ################
 
+#################
+# hyperparameters
+#################
+# learning rate
+eta = 0.3
+# momentum
+alpha = 0.3
+# number of hidden units
+n = 4
+
 ###############
 # function defs
 ###############
@@ -37,21 +47,12 @@ def sigmoid(z, derivative):
         return 1 / (1+np.exp(-z))
 
 #################
-# hyperparameters
-#################
-# learning rate
-eta = 0.3
-# momentum
-alpha = 0.3
-# number of hidden units
-n = 4
-
-#################
 # data structures
 #################
 # Training data as a 10000x17 matrix seeded with letter attributes
 # Rows in data matrices correspond to number of items in minibatch
 # columns correspond to values of these items (values of xi for all items X in training data)
+# numpy stores data in row major order
 X_attributes = np.full( (len(letters_list_training),16), [ltr.attributes for ltr in letters_list_training] )
 # print X_attributes.shape
 ##print X_attributes
@@ -62,7 +63,7 @@ X_attributes = np.full( (len(letters_list_training),16), [ltr.attributes for ltr
 #print X.mean(axis=0) # get mean of each column
 # print X[1:].mean(axis=0)
 # # standard deviation of columns
-# print X[1:].std(0)
+#print X_attributes[1:].std(0)
 # # don't include column 1 (bias inputs) in the preprocessing
 # X_scaled = (X - X[1:].mean(axis=0) / X[1:].std(0))
 # print X_scaled
@@ -72,16 +73,27 @@ X_attributes = np.full( (len(letters_list_training),16), [ltr.attributes for ltr
 # scaled to be Gaussian with zero mean and unit variance
 # only scale columns 2-17, don't include bias input column
 X_scaled = preprocessing.scale(X_attributes)
+#print X_attributes.std(axis=0)
 #X_scaled = preprocessing.scale(X)
 # X = scale( X, axis=0, with_mean=True, with_std=True, copy=True )
-##print X_scaled
+#print X_scaled
 
 # Concatenate scaled data with the 1s needed for bias inputs
 bias_input = np.full((len(letters_list_training), 1), 1.0)
-##print bias_input
+print bias_input.shape
 X = np.concatenate((bias_input, X_scaled), axis=1)
-# print X
-#print X.shape
+#print X
+print X.shape
+
+# transpose row vector to column vector
+# by casting array to matrix then transposing
+# print X[0,:].shape
+# X_row = np.mat(X[0,:])
+# print X_row.shape
+# X_row.T
+# X[0,:][np.newaxis, :].T
+# X[0,:][None].T
+#print X_row.shape
 
 # The preprocessing module provides a utility class StandardScaler
 # that implements the Transformer API to compute the mean and standard deviation
@@ -109,23 +121,41 @@ initial_weights = np.random.uniform(low= -.25, high= .25, size=(17,n) )
 #     2. Forward propagate the activations times the weights to each node in the hidden layer.
 #     3. Forward propagate the activations times weights from the hidden layer to the output layer.
 #     4. Interpret the output layer as a classification.
-increment = 0
+epoch_increment = 0
 epoch = 5
 
 for iter in xrange(epoch):
-    text = "\rEpoch "+str((increment)+1)+"/"+str(epoch)
+    text = "\rEpoch "+str((epoch_increment)+1)+"/"+str(epoch)
     sys.stdout.write(text)
 
-    # forward propagation
-    # initial run of data, use sigmoid activation function
-    # pass in dot products of inputs and weights
-    # output is a 10000x4 matrix
-    hidden_layer = sigmoid(np.dot(X, initial_weights), False)
-    # print hidden_layer
-    # print hidden_layer.shape
+    # for loops:
+    # training set: epoch
+        # input -> hidden layer
+        # hidden layer -> output layer
 
-    # calculate error
+    # iterate through data matrix to operate on individual training instances
+    for row in X[0:2]:
+        print "\n----New row----", row #instance i vector
+        # forward propagation
+        # initial run of data, use sigmoid activation function
+        # pass in dot products of inputs and weights
+        ## hidden_layer = sigmoid(np.dot(i.T, initial_weights), False)
+        # print hidden_layer.shape
 
-    # change weights after each training example
+        # transpose row vector for matrix multiplication
+        print row.shape
+        X_row = np.mat(row)
+        print X_row.shape
+        X_col = X_row.transpose()
+        # # X[0,:][np.newaxis, :].T
+        # # X[0,:][None].T
+        print X_col.shape
+        print X_col
 
-    increment += 1
+        # calculate error
+
+        # change weights after each training example
+
+    epoch_increment += 1
+
+# list for target: list of 26 with one valued at .9 and the rest valued at .1
