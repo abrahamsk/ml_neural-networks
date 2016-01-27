@@ -14,37 +14,36 @@ from neural_net import *
 ###############
 # function defs
 ###############
-def forward_propagation():
+def forward_propagation(row):
     """
     Function called in train()
     Forward propagate the input through the neural network
     during neural network training
     Does not include error computation
-    :return: output of neural net
+    :param row of data matrix:
+    :return output of neural net:
     """
-    # iterate through data matrix to operate on individual training instances
-    # ---> using slices [0:2] to make running the program during debug quicker
-    for row in X[0:3]:
-        ####print "\n----New row in input matrix----"  # , row #instance i vector
-        # transpose row vector for matrix multiplication
-        # print row.shape #17,
-        X_row = np.mat(row)
-        # print X_row.shape
-        X_col = X_row.transpose()
-        # # X[0,:][np.newaxis, :].T
-        # # X[0,:][None].T
-        ###print X_col.shape
-        ##print X_col
 
-        # forward propagation
-        # initial run of data, use sigmoid activation function
-        # pass in dot products of inputs and weights
-        hidden_layer = sigmoid(np.dot(initial_weights, X_col), False)
-        print hidden_layer.shape  # 4x1
-        print hidden_layer
+    ####print "\n----New row in input matrix----"  # , row #instance i vector
+    # transpose row vector for matrix multiplication
+    # print row.shape #17,
+    X_row = np.mat(row)
+    #print X_row.shape
+    X_col = X_row.transpose()
+    # # X[0,:][np.newaxis, :].T
+    # # X[0,:][None].T
+    ###print X_col.shape
+    ##print X_col
 
-        # hidden_layer is the activation at the hidden layer
-        # use hidden layer activations as input for the output layer
+    # forward propagation
+    # initial run of data, use sigmoid activation function
+    # pass in dot products of inputs and weights
+    hidden_layer = sigmoid(np.dot(initial_weights, X_col), False)
+    # print hidden_layer.shape  # 4x1
+    # print hidden_layer
+
+    # hidden_layer is the activation at the hidden layer
+    # use hidden layer activations as input for the output layer
 
     # use hidden layer activations to get activations for output layer
     # append one row of 1s to hidden layer to allow for bias input
@@ -135,6 +134,7 @@ def train(num_epochs):
     epoch_increment = 0
 
     # run training for <num_epochs> number of epochs
+    # each epoch runs through entire training set
     for iter in xrange(num_epochs):
         text = "\rEpoch "+str((epoch_increment)+1)+"/"+str(num_epochs)
         sys.stdout.write(text)
@@ -147,13 +147,17 @@ def train(num_epochs):
         # feedforward input through neural net: input layer -> hidden layer -> output
         # Y is the the output of the matrix, without any error correction
         # but already processed through the sigmoid function
-        Y = forward_propagation()
-        #print "Post feedforward call", Y.shape #26x1
-        ####print "Post feedforward func, output Y", Y.shape
 
-        # use back propagation to compute error and adjust weights
-        # pass in activation of output layer
-        back_propagation(Y, X_targets)
+        # iterate through data matrix to operate on individual training instances
+        # ---> using slices [0:2] to make running the program during debug quicker
+        for row in X[0:3]:
+            Y = forward_propagation(row)
+            #print "Post feedforward call", Y.shape #26x1
+            ####print "Post feedforward func, output Y", Y.shape
+
+            # use back propagation to compute error and adjust weights
+            # pass in activation of output layer
+            back_propagation(Y, X_targets)
 
         epoch_increment += 1
 
