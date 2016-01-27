@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#  utf-8 for non-ASCII chars
+##  utf-8 for non-ASCII chars
 
 # Machine Learning 445
 # HW 2: Neural Networks
@@ -8,6 +8,7 @@
 # 1/28/16
 
 # import data structures, variables, and neural net from neural_net
+# data structures in the global scope
 from neural_net import *
 
 ###############
@@ -15,17 +16,18 @@ from neural_net import *
 ###############
 def forward_propagation():
     """
+    Function called in train()
     Forward propagate the input through the neural network
     during neural network training
     Does not include error computation
     :return: output of neural net
     """
     # iterate through data matrix to operate on individual training instances
-    # ---> using slices to make running the program during coding quicker
-    for row in X[0:2]:
+    # ---> using slices [0:2] to make running the program during debug quicker
+    for row in X[0:3]:
         ####print "\n----New row in input matrix----"  # , row #instance i vector
         # transpose row vector for matrix multiplication
-        ##print row.shape
+        # print row.shape #17,
         X_row = np.mat(row)
         # print X_row.shape
         X_col = X_row.transpose()
@@ -38,9 +40,10 @@ def forward_propagation():
         # initial run of data, use sigmoid activation function
         # pass in dot products of inputs and weights
         hidden_layer = sigmoid(np.dot(initial_weights, X_col), False)
-        ####print hidden_layer  # 4x1
+        print hidden_layer.shape  # 4x1
+        print hidden_layer
 
-        # hidden_layer matrix is the activation at the hidden layer
+        # hidden_layer is the activation at the hidden layer
         # use hidden layer activations as input for the output layer
 
     # use hidden layer activations to get activations for output layer
@@ -66,6 +69,7 @@ def forward_propagation():
 
 def back_propagation(output_activations, target):
     """
+    Function called in train()
     The the back-propagation algorithm is used
     during training to update all weights in the network.
     Array of output layer activations and array of targets passed in
@@ -88,11 +92,11 @@ def back_propagation(output_activations, target):
 
     # map target value to output node (e.g. A == node[0])
 
-    for k in output_activations:
-        error = k*(1 - k)*(target - k)
-
-
-    return error
+    # for k in output_activations:
+    #     error = k*(1 - k)*(target - k)
+    #
+    #
+    # return error
 
 
     # 3. change weights after each training example
@@ -117,6 +121,7 @@ def back_propagation(output_activations, target):
 # 	5. Run the back-propagation algorithm to update all weights in the network.
 def train(num_epochs):
     """
+    train() calls forward_propagation() and back_propagation()
     Run training examples through neural net to train for letter recognition
     Classification with a two-layer neural network (Forward propagation)
     For two-layer networks (one hidden layer):
@@ -129,6 +134,7 @@ def train(num_epochs):
     """
     epoch_increment = 0
 
+    # run training for <num_epochs> number of epochs
     for iter in xrange(num_epochs):
         text = "\rEpoch "+str((epoch_increment)+1)+"/"+str(num_epochs)
         sys.stdout.write(text)
