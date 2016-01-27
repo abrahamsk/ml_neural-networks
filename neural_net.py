@@ -45,13 +45,30 @@ def sigmoid(z, derivative):
 #################
 # data structures
 #################
+# double check that order for attribute and target matrices are correct
+# for ltr in letters_list_training[:6]: print ltr.value, ltr.attributes
+# print "..."
+# for ltr in letters_list_training[9995:]: print ltr.value, ltr.attributes
+# print "---------"
+
 # Training data as a 10000x17 matrix seeded with letter attributes
 # Rows in data matrices correspond to number of items in minibatch
 # columns correspond to values of these items (values of xi for all items X in training data)
 # numpy stores data in row major order
 X_attributes = np.full( (len(letters_list_training),16), [ltr.attributes for ltr in letters_list_training] )
 # print X_attributes.shape
-##print X_attributes
+# print X_attributes[:6]
+# print "..."
+# print X_attributes[9995:]
+# print "---------"
+
+# save targets in the order entered into the matrix
+X_targets = np.array([ list(ltr.value) for ltr in letters_list_training ])
+# print X_targets[:6]
+# print "..."
+# ####print X_targets.shape
+# print X_targets[9995:]
+# print "---------"
 
 # Preprocessing: scale the training data
 # to have zero mean and unit variance along each column (feature)
