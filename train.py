@@ -15,13 +15,13 @@ import string
 ###############
 # function defs
 ###############
-def forward_propagation(row, hidden_layer):
+def forward_propagation(row):
     """
     Function called in train()
     Forward propagate the input through the neural network
     during neural network training
     Does not include error computation
-    :param row of data matrix, list to hold hidden layer activations:
+    :param row of data matrix:
     :return output of neural net:
     """
 
@@ -41,7 +41,7 @@ def forward_propagation(row, hidden_layer):
     # pass in dot products of inputs and weights
     hidden_layer = sigmoid(np.dot(initial_weights, X_col), False)
     # print hidden_layer.shape  # 4x1
-    print "hidden layer", hidden_layer
+    # print "hidden layer", hidden_layer
     # print hidden_layer.dtype
 
     # hidden_layer is the activation at the hidden layer
@@ -64,16 +64,12 @@ def forward_propagation(row, hidden_layer):
     # print "output results", Y
     # print "Y shape", Y.shape #26x1
 
-    # cast hidden layer to list to pass back
-    hidden_layer.tolist()
-    print "hidden layer list", hidden_layer
-
-    # return activation from output layers
-    return Y
+    # return activations from hidden and output layers
+    return hidden_layer, Y
 
 ################################################################################################
 
-def back_propagation(output_activations, target):
+def back_propagation(hidden_activations, output_activations, target):
     """
     Function called in train()
     The the back-propagation algorithm is used
@@ -105,34 +101,57 @@ def back_propagation(output_activations, target):
     # print output_layer_targets
     # print len(output_layer_targets)
 
-    # list for errors at output layer
-    output_error = []
+    # list for errors at output layer and hidden layer
+    output_layer_error = []
+    hidden_layer_error = []
+    # counters to move through nodes of output and hidden layers
+    output_node_index = 0
+    hidden_node_index = 0
 
     # calculate error for each output layer node
     # use target list indices
     for k in output_activations:
-        node_index = 0
         # get the error at an individual node, using the place in the target list
         # that corresponds to the target for the individual node
-        node_error = k*(1 - k)*(output_layer_targets[node_index] - k)
+        node_error = k*(1 - k)*(output_layer_targets[output_node_index] - k)
         # print node_error
-        # append to list of errors
-        output_error.append(node_error)
-        node_index += 1 # move index of node forward by one
-    # print output_error
+        # append this node's error to the list of output layer errors
+        output_layer_error.append(node_error)
+        output_node_index += 1 # move index of node forward by one
+        # print output_error
 
     # For each hidden unit j, calculate error term δj :
     # δj ← hj(1−hj) ( (∑ k∈output units) wkj δk )
     # h_j is activation of each hidden unit j
+    output_node_index = 0 # reset counter for use in summing
+    output_sum = 0 # keeps track of (∑ k∈output units) wkj δk )
+    for j in hidden_activations:
+        # get the sum of weight[k][j]*node_error for all output units
+        for k in output_activations:
+            #print hidden_to_output_weights[output_node_index-1][hidden_node_index]
+            output_error = (k*(1 - k)*(output_layer_targets[output_node_index] - k))
+            output_sum += (hidden_to_output_weights[output_node_index][hidden_node_index] * output_error)
 
-
+        #### calculate error at an individual hidden node using the formula from class notes
+        # including the output_sum (∑ k∈output units) wkj δk )
+        hidden_node_error = j * (1 - j) * (output_sum)
+        output_sum = 0 # reset for next hidden node
+        # add this node's error to the list of errors for the hidden layer
+        hidden_layer_error.append(hidden_node_error)
+        # print hidden_node_error.shape #1x1
+        hidden_node_index += 1 # move index of hidden node forward by one
+    # print output_layer_error
+    # print len(output_layer_error) # len=26
+    # print hidden_layer_error
+    # print len(hidden_layer_error) # len=4
 
     # 3. change weights after each training example
     # For each weight wkj from the hidden to output layer:
     #   wkj ← wkj +Δwkj
     #   where
     #   Δwkj =ηδkhj
-    #
+    
+
     # For each weight wji from the input to hidden layer:
     #   wji ←wji +Δwji
     #   where
@@ -183,16 +202,16 @@ def train(num_epochs):
         target_row = 0 # count keeps track of which index of target to pass in
         for row in X[0:3]:
             hidden_layer = [] # list to hold hidden layer, to pass to back_propagation once it's filled
-            Y = forward_propagation(row, hidden_layer)
-            #print "Post feedforward call", Y.shape #26x1
-            ####print "Post feedforward func, output Y", Y.shape
-            print "Hidden layer after forward prop", hidden_layer
+            hidden_layer, Y = forward_propagation(row)
+            # print "Post feedforward call", Y.shape #26x1
+            # print "Post feedforward func, output Y", Y
+            # print "Hidden layer after forward prop", hidden_layer
 
             # use back propagation to compute error and adjust weights
-            # pass in activation of output layer and target letter corresponding to the row
+            # pass in activations of hidden and output layer and target letter corresponding to the row
             # that is currently being passed through the neural net
             # print X_targets[target_row]
-            back_propagation(Y, X_targets[target_row])
+            back_propagation(hidden_layer, Y, X_targets[target_row])
 
             # move to next row of input data to use new target
             target_row += 1
