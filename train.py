@@ -10,6 +10,7 @@
 # import data structures, variables, and neural net from neural_net
 # data structures in the global scope
 from neural_net import *
+import string
 
 ###############
 # function defs
@@ -54,25 +55,26 @@ def forward_propagation(row):
 
     # matrix multiply (hidden layer) dot (weights from hidden -> output)
     output_layer = np.dot(hidden_to_output_weights, hidden_layer_concat)
-    ####print output_layer.shape #26x1
+    #print output_layer.shape #26x1
 
     # apply sigmoid function to output layer
     # to get activations at output layer
     Y = sigmoid(output_layer, False)
-    ####print "output results", Y
-    ####print "Y shape", Y.shape #26x1
+    # print "output results", Y
+    # print "Y shape", Y.shape #26x1
 
     # return activation from output layers
     return Y
 
+################################################################################################
 
 def back_propagation(output_activations, target):
     """
     Function called in train()
     The the back-propagation algorithm is used
     during training to update all weights in the network.
-    Array of output layer activations and array of targets passed in
-    Targets array located in neural_net file
+    Pass in activation of output layer and
+    target letter corresponding to the row that is currently being passed through the neural net
     :return: error
     """
     # calculate error
@@ -90,12 +92,31 @@ def back_propagation(output_activations, target):
     #   δj ← hj(1−hj) ( (∑ k∈output units) wkj δk )
 
     # map target value to output node (e.g. A == node[0])
+    target_string = target.tostring()
+    target_unit = ltr_to_index[target_string]
+    # print "target unit:", target_unit
 
-    # for k in output_activations:
-    #     error = k*(1 - k)*(target - k)
-    #
-    #
-    # return error
+    # calculate error for each node
+    # for node matching letter, t = .9, otherwise t = .1
+    output_layer_targets = [.1 for i in range(0, 26)]
+    output_layer_targets[target_unit] = .9
+    # print output_layer_targets
+    # print len(output_layer_targets)
+
+    # list for errors at output layer
+    error = []
+
+    # calculate error for each output layer node
+    # use target list indices
+    for k in output_activations:
+        node_index = 0
+        node_error = k*(1 - k)*(output_layer_targets[node_index] - k)
+        # print node_error
+        error.append(node_error)
+        node_index += 1 # move index of node forward by one
+
+    # print error
+
 
 
     # 3. change weights after each training example
@@ -109,6 +130,7 @@ def back_propagation(output_activations, target):
     #   where
     #   Δwji =ηδjxi
 
+################################################################################################
 
 # Training a multi-layer neural network
 # Repeat for a given number of epochs or until accuracy on training data is acceptable:
@@ -133,7 +155,7 @@ def train(num_epochs):
     """
     epoch_increment = 0
 
-    # run training for <num_epochs> number of epochs
+    # run training for <num_epochs> number of epochs (defined before func is called in main)
     # each epoch runs through entire training set
     for iter in xrange(num_epochs):
         text = "\rEpoch "+str((epoch_increment)+1)+"/"+str(num_epochs)
@@ -150,18 +172,49 @@ def train(num_epochs):
 
         # iterate through data matrix to operate on individual training instances
         # ---> using slices [0:2] to make running the program during debug quicker
+        target_row = 0 # count keeps track of which index of target to pass in
         for row in X[0:3]:
             Y = forward_propagation(row)
             #print "Post feedforward call", Y.shape #26x1
             ####print "Post feedforward func, output Y", Y.shape
 
             # use back propagation to compute error and adjust weights
-            # pass in activation of output layer
-            back_propagation(Y, X_targets)
+            # pass in activation of output layer and target letter corresponding to the row
+            # that is currently being passed through the neural net
+            # print X_targets[target_row]
+            back_propagation(Y, X_targets[target_row])
 
+            # move to next row of input data to use new target
+            target_row += 1
+
+        # increment epoch after all input data is processed
         epoch_increment += 1
 
-    # used a list for targets: list of 26 with one valued at .9 and the rest valued at .1
+    # use a list for targets: list of 26 with one valued at .9 and the rest valued at .1
+    # use error to calculate updated weights
+
+################################################################################################
+
+def letter_to_unit_index(input_ltr):
+    """
+    Converts a target letter to an indexed number
+    corresponding to indices 0-25 in output layer of neural net
+    used in computing targets
+    :return number mapping to index of output layer for input letter:
+    """
+    # index in output layer
+    index = 0
+    for ltr in string.ascii_uppercase:
+        index += 1
+        if input_ltr == ltr:
+            return index
+
+#### alternative to function: dict mapping letters to number (index of unit in output row) ####
+ltr_to_index = dict(zip(string.ascii_uppercase, range(0,26)))
+# print ltr_to_index['A'] #0
+# print ltr_to_index['Z'] #25
+
+################################################################################################
 
 ################
 # Experiment 1 #
