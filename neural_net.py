@@ -67,7 +67,7 @@ X_attributes = np.full( (len(letters_list_training),16), [ltr.attributes for ltr
 X_targets = np.array([list(ltr.value) for ltr in letters_list_training])
 # print X_targets[:6]
 # print "..."
-# ####print X_targets.shape
+# print X_targets.shape
 # print X_targets[9995:]
 # print "---------"
 
@@ -96,7 +96,7 @@ bias_input = np.full((len(letters_list_training), 1), 1.0)
 # print bias_input.shape
 X = np.concatenate((X_scaled, bias_input), axis=1)
 # print X
-# print X.shape
+# print X.shape #10000x17
 # The preprocessing module provides a utility class StandardScaler
 # that implements the Transformer API to compute the mean and standard deviation
 # on a training set so you can reapply the same transformation on the testing set
@@ -106,7 +106,7 @@ X = np.concatenate((X_scaled, bias_input), axis=1)
 # Weight matrices have the same number of columns as units in the previous layer
 # and the same number of rows as units in the next layer
 # n is the number of hidden units
-initial_weights = np.random.uniform(low= -.25, high= .25, size=(n,17) )
+input_to_hidden_weights = np.random.uniform(low= -.25, high= .25, size=(n, 17))
 # print initial_weights
 ###print initial_weights.shape
 

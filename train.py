@@ -39,10 +39,10 @@ def forward_propagation(row):
     # forward propagation
     # initial run of data, use sigmoid activation function
     # pass in dot products of inputs and weights
-    hidden_layer = sigmoid(np.dot(initial_weights, X_col), False)
+    hidden_layer = sigmoid(np.dot(input_to_hidden_weights, X_col), False)
     # print hidden_layer.shape  # 4x1
     # print "hidden layer", hidden_layer
-    # print hidden_layer.dtype
+    # print hidden_layer.dtype # float64
 
     # hidden_layer is the activation at the hidden layer
     # use hidden layer activations as input for the output layer
@@ -52,7 +52,7 @@ def forward_propagation(row):
     bias_input_hidden_layer = np.full((1, 1), 1.0)
     # print bias_input_hidden_layer
     hidden_layer_concat = np.concatenate((hidden_layer, bias_input_hidden_layer), axis=0)
-    # print hidden_layer_concat
+    # print hidden_layer_concat.shape
 
     # matrix multiply (hidden layer) dot (weights from hidden -> output)
     output_layer = np.dot(hidden_to_output_weights, hidden_layer_concat)
@@ -90,8 +90,7 @@ def back_propagation(hidden_activations, output_activations, target):
     # the rest of the outputs should be .1
 
     # map target value to output node (e.g. A == node[0])
-    target_string = target.tostring()
-    target_unit = ltr_to_index[target_string]
+    target_unit = ltr_to_index[target.tostring()]
     # print "target unit:", target_unit
 
     # calculate error for each node
@@ -131,6 +130,8 @@ def back_propagation(hidden_activations, output_activations, target):
             #print hidden_to_output_weights[output_node_index-1][hidden_node_index]
             output_error = (k*(1 - k)*(output_layer_targets[output_node_index] - k))
             output_sum += (hidden_to_output_weights[output_node_index][hidden_node_index] * output_error)
+        # replace for loop with matrix multiplication
+        #np.dot(hidden_activations, hidden_to_output_weights)
 
         #### calculate error at an individual hidden node using the formula from class notes
         # including the output_sum (∑ k∈output units) wkj δk )
@@ -146,16 +147,45 @@ def back_propagation(hidden_activations, output_activations, target):
     # print len(hidden_layer_error) # len=4
 
     # 3. change weights after each training example
+    # To avoid oscillations at large η, introduce momentum,
+    # in which change in weight is dependent on past weight change:
+    # Δw^t =η*δ_j*x_ji + αΔw^(t−1)_ji
+
+    # Hidden -> output layer
     # For each weight wkj from the hidden to output layer:
     #   wkj ← wkj +Δwkj
     #   where
     #   Δwkj =ηδkhj
-    
 
-    # For each weight wji from the input to hidden layer:
-    #   wji ←wji +Δwji
-    #   where
-    #   Δwji =ηδjxi
+    # save deltas for the next iteration of weight change
+    hidden_to_output_deltas = [0.0, 0.0, 0.0, 0.0]
+    for j in range(len(hidden_activations)):
+        # print "j ", j
+        for k in range(len(output_activations)):
+            # print "k ", k
+            # print "old weight ", hidden_to_output_weights[k][j]
+            # weight delta = Δw^t =η*δ_j*x_ji + αΔw^(t−1)_ji
+###            delta = eta * output_layer_error[j]*X[j][k] + alpha*hidden_to_output_deltas[j][k]
+            # save deltas for the next iteration of weight change
+###            hidden_to_output_deltas.append(delta)
+            hidden_to_output_weights[k][j] = hidden_to_output_weights[k][j] + hidden_layer_error[j]
+            # print "new weight ", hidden_to_output_weights[k][j]
+
+    #         hidden_to_output_weights
+    #         change = output_deltas[k] * self.ah[j]
+    #         self.wo[j][k] -= N * change + self.co[j][k]
+    #         self.co[j][k] = change
+    #
+    # Change weights input -> hidden layer
+    # # For each weight wji from the input to hidden layer:
+    # #   wji ←wji +Δwji
+    # #   where
+    # #   Δwji =ηδjxi
+    # for i in X[0:3]:
+    #     for j in hidden_activations:
+
+
+
 
 ################################################################################################
 
@@ -205,7 +235,7 @@ def train(num_epochs):
             hidden_layer, Y = forward_propagation(row)
             # print "Post feedforward call", Y.shape #26x1
             # print "Post feedforward func, output Y", Y
-            # print "Hidden layer after forward prop", hidden_layer
+            # print "Hidden layer after forward prop", hidden_layer.shape
 
             # use back propagation to compute error and adjust weights
             # pass in activations of hidden and output layer and target letter corresponding to the row
