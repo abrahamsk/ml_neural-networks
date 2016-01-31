@@ -66,11 +66,11 @@ def forward_propagation(row):
     # print "Y shape", Y.shape #26x1
 
     # return activations from hidden and output layers
-    return hidden_layer_concat, Y
+    return hidden_layer, Y
 
 ################################################################################################
 
-def back_propagation(hidden_activations_concat, output_activations, target):
+def back_propagation(hidden_activations, output_activations, target):
     """
     Function called in train()
     The the back-propagation algorithm is used
@@ -125,7 +125,7 @@ def back_propagation(hidden_activations_concat, output_activations, target):
     # For each hidden unit j, calculate error term δj :
     # δj ← hj(1−hj) ( (∑ k∈output units) wkj δk )
     # h_j is activation of each hidden unit j
-    for j in range(len(hidden_activations_concat)):
+    for j in range(len(hidden_activations)):
         output_node_index = 0 # reset counter for use in summing
         output_sum = 0 # keeps track of (∑ k∈output units) wkj δk )
         # get the sum of weight[k][j]*node_error for all output units
@@ -143,10 +143,10 @@ def back_propagation(hidden_activations_concat, output_activations, target):
         ## calculate error at an individual hidden node using the formula from class notes
         # including the output_sum (∑ k∈output units) wkj δk )
         print "*************"
-        print "hidden_activations_concat[j]:", hidden_activations_concat[j]
-        print "(1 - hidden_activations_concat[j]):", (1 - hidden_activations_concat[j])
+        print "hidden_activations_concat[j]:", hidden_activations[j]
+        print "(1 - hidden_activations_concat[j]):", (1 - hidden_activations[j])
         print "output sum:", output_sum
-        hidden_node_error = hidden_activations_concat[j] * (1 - hidden_activations_concat[j]) * (output_sum)
+        hidden_node_error = hidden_activations[j] * (1 - hidden_activations[j]) * (output_sum)
         print "hidden_node_error", hidden_node_error
         print "*************"
 
@@ -180,11 +180,11 @@ def back_propagation(hidden_activations_concat, output_activations, target):
     # print "output activations len", (len(output_activations))
     # print "output activations:\n", output_activations
 
-    for j in range(len(hidden_activations_concat)):
+    for j in range(len(hidden_activations)):
         # print "j ", j
         for k in range(len(output_activations)):
             # print "k ", k
-            delta = eta * output_layer_error[k] * hidden_activations_concat[j]
+            delta = eta * output_layer_error[k] * hidden_activations[j]
             # update weight
             # print "hidden to output weights shape", hidden_to_output_weights.shape #26x5
             hidden_to_output_weights_kj_prior = hidden_to_output_weights[k][j]
@@ -217,8 +217,8 @@ def back_propagation(hidden_activations_concat, output_activations, target):
         # print "i ----------", icount
         # icount += 1
         # jcount = 0
-        print "hidden activations len in backprop:", (len(hidden_activations_concat)) #len=5
-        for j in range(len(hidden_activations_concat)):
+        print "hidden activations len in backprop:", (len(hidden_activations)) #len=5
+        for j in range(len(hidden_activations)):
             # print "j ", jcount
             # jcount += 1
             # print input_to_hidden_weights[j][i]
@@ -238,7 +238,7 @@ def back_propagation(hidden_activations_concat, output_activations, target):
             print "input to hidden weights shape", input_to_hidden_weights.shape #4x17
             print "input_to_hidden_weights[j][i]:", input_to_hidden_weights[j][i], " + delta: ", delta
             input_to_hidden_weights[j][i] = input_to_hidden_weights[j][i] + delta
-            # print "new weight ", hidden_to_output_weights[j][i]
+            print "new weight ", input_to_hidden_weights[j][i]
 
 
 
@@ -288,7 +288,7 @@ def train(num_epochs):
         target_row = 0 # count keeps track of which index of target to pass in
         for row in X[0:8]:
             hidden_layer = [] # list to hold hidden layer, to pass to back_propagation once it's filled
-            hidden_layer_concat, Y = forward_propagation(row)
+            hidden_layer, Y = forward_propagation(row)
             # print "Post feedforward call", Y.shape #26x1
             # print "Post feedforward func, output Y", Y
             # print "Hidden layer shape after forward prop", hidden_layer.shape
@@ -297,7 +297,7 @@ def train(num_epochs):
             # pass in activations of hidden and output layer and target letter corresponding to the row
             # that is currently being passed through the neural net
             # print X_targets[target_row]
-            back_propagation(hidden_layer_concat, Y, X_targets[target_row])
+            back_propagation(hidden_layer, Y, X_targets[target_row])
 
             # move to next row of input data to use new target
             target_row += 1
