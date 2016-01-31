@@ -169,10 +169,6 @@ def back_propagation(hidden_activations, output_activations, target):
             hidden_to_output_weights[k][j] = hidden_to_output_weights[k][j] + delta
             # print "new weight ", hidden_to_output_weights[k][j]
 
-    #         hidden_to_output_weights
-    #         change = output_deltas[k] * self.ah[j]
-    #         self.wo[j][k] -= N * change + self.co[j][k]
-    #         self.co[j][k] = change
 
     #### Change weights from input -> hidden layer ####
     # # For each weight wji from the input to hidden layer:
@@ -185,7 +181,7 @@ def back_propagation(hidden_activations, output_activations, target):
     # print input_to_hidden_deltas.shape #4x17
     # icount = 0
     # jcount = 0
-    for i in range(len(X[0:3])):
+    for i in range(len(X)):
         # print "i ----------", icount
         # icount += 1
         # jcount = 0
@@ -197,17 +193,13 @@ def back_propagation(hidden_activations, output_activations, target):
             # print "old weight ", hidden_to_output_weights[k][j]
             # weight delta = Δw^t =η*δ_j*x_ji + αΔw^(t−1)_ji
             # input_to_hidden_deltas[j][i] is the previous iteration's change in weights
-###            delta = eta * hidden_layer_error[j]*X[j][i] + alpha*input_to_hidden_deltas[j][i]
+            delta = eta * hidden_layer_error[j]*X[j][i] + alpha*input_to_hidden_deltas[j][i]
             # save deltas for the next iteration of weight change
             input_to_hidden_deltas[j][i] = delta
-            # update weight
+            # print input_to_hidden_deltas[j][i]
+            # update weight:
             input_to_hidden_weights[j][i] = input_to_hidden_weights[j][i] + delta
             # print "new weight ", hidden_to_output_weights[k][j]
-
-    #         hidden_to_output_weights
-    #         change = output_deltas[k] * self.ah[j]
-    #         self.wo[j][k] -= N * change + self.co[j][k]
-    #         self.co[j][k] = change
 
 
 
@@ -255,7 +247,7 @@ def train(num_epochs):
         # iterate through data matrix to operate on individual training instances
         # ---> using slices [0:2] to make running the program during debug quicker
         target_row = 0 # count keeps track of which index of target to pass in
-        for row in X[0:3]:
+        for row in X:
             hidden_layer = [] # list to hold hidden layer, to pass to back_propagation once it's filled
             hidden_layer, Y = forward_propagation(row)
             # print "Post feedforward call", Y.shape #26x1
