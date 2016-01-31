@@ -78,9 +78,9 @@ def back_propagation(hidden_activations, output_activations, target):
     target letter corresponding to the row that is currently being passed through the neural net
     :return: error
     """
-    # calculate error
-    # calculate delta_k for each output unit
-    # 2. Calculate the error terms:
+
+    #### 2. Calculate the error terms ####
+    #### calculate error delta_k for each output unit ####
     #   For each output unit k, calculate error term δk :
     #   δk ← ok(1 − ok)(tk − ok)
     #
@@ -93,7 +93,7 @@ def back_propagation(hidden_activations, output_activations, target):
     target_unit = ltr_to_index[target.tostring()]
     # print "target unit:", target_unit
 
-    # calculate error for each node
+    # calculate target for each node
     # for node matching letter, t = .9, otherwise t = .1
     output_layer_targets = [.1 for i in range(0, 26)]
     output_layer_targets[target_unit] = .9
@@ -107,33 +107,37 @@ def back_propagation(hidden_activations, output_activations, target):
     output_node_index = 0
     hidden_node_index = 0
 
-    # calculate error for each output layer node
+    ### calculate error for each output layer node ###
     # use target list indices
     for k in output_activations:
         # get the error at an individual node, using the place in the target list
         # that corresponds to the target for the individual node
         node_error = k*(1 - k)*(output_layer_targets[output_node_index] - k)
+        # print node_error, "=", k,"* (1 - ",k, ") * (", output_layer_targets[output_node_index], " - ", k, ")"
         # print node_error
         # append this node's error to the list of output layer errors
         output_layer_error.append(node_error)
         output_node_index += 1 # move index of node forward by one
         # print output_error
 
+    #### Calculate error for each hidden node ####
     # For each hidden unit j, calculate error term δj :
     # δj ← hj(1−hj) ( (∑ k∈output units) wkj δk )
     # h_j is activation of each hidden unit j
-    output_node_index = 0 # reset counter for use in summing
-    output_sum = 0 # keeps track of (∑ k∈output units) wkj δk )
     for j in hidden_activations:
+        output_node_index = 0 # reset counter for use in summing
+        output_sum = 0 # keeps track of (∑ k∈output units) wkj δk )
         # get the sum of weight[k][j]*node_error for all output units
         for k in output_activations:
             #print hidden_to_output_weights[output_node_index-1][hidden_node_index]
             output_error = (k*(1 - k)*(output_layer_targets[output_node_index] - k))
             output_sum += (hidden_to_output_weights[output_node_index][hidden_node_index] * output_error)
+            output_node_index += 1
+            # print output_node_index # prints 26 times before loop exits
         # replace for loop with matrix multiplication
         #np.dot(hidden_activations, hidden_to_output_weights)
 
-        #### calculate error at an individual hidden node using the formula from class notes
+        ## calculate error at an individual hidden node using the formula from class notes
         # including the output_sum (∑ k∈output units) wkj δk )
         hidden_node_error = j * (1 - j) * (output_sum)
         output_sum = 0 # reset for next hidden node
@@ -146,43 +150,62 @@ def back_propagation(hidden_activations, output_activations, target):
     # print hidden_layer_error
     # print len(hidden_layer_error) # len=4
 
-    # 3. change weights after each training example
+    #### 3. change weights after each training example ####
     # To avoid oscillations at large η, introduce momentum,
     # in which change in weight is dependent on past weight change:
     # Δw^t =η*δ_j*x_ji + αΔw^(t−1)_ji
 
-    # Hidden -> output layer
+    #### Change weights from hidden -> output layer ####
     # For each weight wkj from the hidden to output layer:
     #   wkj ← wkj +Δwkj
     #   where
     #   Δwkj =ηδkhj
-
-    # save deltas for the next iteration of weight change
-    hidden_to_output_deltas = [0.0, 0.0, 0.0, 0.0]
     for j in range(len(hidden_activations)):
         # print "j ", j
         for k in range(len(output_activations)):
             # print "k ", k
-            # print "old weight ", hidden_to_output_weights[k][j]
-            # weight delta = Δw^t =η*δ_j*x_ji + αΔw^(t−1)_ji
-###            delta = eta * output_layer_error[j]*X[j][k] + alpha*hidden_to_output_deltas[j][k]
-            # save deltas for the next iteration of weight change
-###            hidden_to_output_deltas.append(delta)
-            hidden_to_output_weights[k][j] = hidden_to_output_weights[k][j] + hidden_layer_error[j]
+            delta = eta * output_layer_error[k] * j
+            # update weight
+            hidden_to_output_weights[k][j] = hidden_to_output_weights[k][j] + delta
             # print "new weight ", hidden_to_output_weights[k][j]
 
     #         hidden_to_output_weights
     #         change = output_deltas[k] * self.ah[j]
     #         self.wo[j][k] -= N * change + self.co[j][k]
     #         self.co[j][k] = change
-    #
-    # Change weights input -> hidden layer
+
+    #### Change weights from input -> hidden layer ####
     # # For each weight wji from the input to hidden layer:
     # #   wji ←wji +Δwji
     # #   where
     # #   Δwji =ηδjxi
-    # for i in X[0:3]:
-    #     for j in hidden_activations:
+    # save deltas for the next iteration of weight change
+    input_to_hidden_deltas = [0.0, 0.0, 0.0, 0.0]
+    # icount = 0
+    # jcount = 0
+    for i in range(len(X[0:3])):
+        # print "i ----------", icount
+        # icount += 1
+        # jcount = 0
+        for j in range(len(hidden_activations)):
+            print "j ", jcount
+            jcount += 1
+            # print input_to_hidden_weights[j][i]
+            # print "k ", k
+            # print "old weight ", hidden_to_output_weights[k][j]
+            # weight delta = Δw^t =η*δ_j*x_ji + αΔw^(t−1)_ji
+            # input_to_hidden_deltas[j][i] is the previous iteration's change in weights
+###            delta = eta * hidden_layer_error[j]*X[j][i] + alpha*input_to_hidden_deltas[j][i]
+            # save deltas for the next iteration of weight change
+            input_to_hidden_deltas.append(delta)
+            # update weight
+            input_to_hidden_weights[j][i] = input_to_hidden_weights[j][i] + delta
+            # print "new weight ", hidden_to_output_weights[k][j]
+
+    #         hidden_to_output_weights
+    #         change = output_deltas[k] * self.ah[j]
+    #         self.wo[j][k] -= N * change + self.co[j][k]
+    #         self.co[j][k] = change
 
 
 
