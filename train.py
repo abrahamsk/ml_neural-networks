@@ -110,11 +110,11 @@ def back_propagation(hidden_activations_concat, output_activations, target):
 
     ### calculate error for each output layer node ###
     # use target list indices
-    for k in output_activations:
+    for k in range(len(output_activations)):
         # get the error at an individual node, using the place in the target list
         # that corresponds to the target for the individual node
-        node_error = k*(1 - k)*(output_layer_targets[output_node_index] - k)
-        # print node_error, "=", k,"* (1 - ",k, ") * (", output_layer_targets[output_node_index], " - ", k, ")"
+        node_error = output_activations[k] * (1 - output_activations[k]) * (
+            output_layer_targets[output_node_index] - output_activations[k])
         # print node_error
         # append this node's error to the list of output layer errors
         output_layer_error.append(node_error)
@@ -125,13 +125,14 @@ def back_propagation(hidden_activations_concat, output_activations, target):
     # For each hidden unit j, calculate error term δj :
     # δj ← hj(1−hj) ( (∑ k∈output units) wkj δk )
     # h_j is activation of each hidden unit j
-    for j in hidden_activations_concat:
+    for j in range(len(hidden_activations_concat)):
         output_node_index = 0 # reset counter for use in summing
         output_sum = 0 # keeps track of (∑ k∈output units) wkj δk )
         # get the sum of weight[k][j]*node_error for all output units
-        for k in output_activations:
+        for k in range(len(output_activations)):
             #print hidden_to_output_weights[output_node_index-1][hidden_node_index]
-            output_error = (k*(1 - k)*(output_layer_targets[output_node_index] - k))
+            output_error = (output_activations[k] * (1 - output_activations[k]) * (
+                output_layer_targets[output_node_index] - output_activations[k]))
             output_sum += (hidden_to_output_weights[output_node_index][hidden_node_index] * output_error)
             print "------------------ output sum", output_sum
             output_node_index += 1
@@ -141,7 +142,15 @@ def back_propagation(hidden_activations_concat, output_activations, target):
 
         ## calculate error at an individual hidden node using the formula from class notes
         # including the output_sum (∑ k∈output units) wkj δk )
-        hidden_node_error = j * (1 - j) * (output_sum)
+        print "*************"
+        print "hidden_activations_concat[j]:", hidden_activations_concat[j]
+        print "(1 - hidden_activations_concat[j]):", (1 - hidden_activations_concat[j])
+        print "output sum:", output_sum
+        hidden_node_error = hidden_activations_concat[j] * (1 - hidden_activations_concat[j]) * (output_sum)
+        print "hidden_node_error", hidden_node_error
+        print "*************"
+
+
         output_sum = 0 # reset for next hidden node
         # add this node's error to the list of errors for the hidden layer
         hidden_layer_error.append(hidden_node_error)
