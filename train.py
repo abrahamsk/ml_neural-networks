@@ -180,7 +180,9 @@ def back_propagation(hidden_activations, output_activations, target):
     # #   where
     # #   Δwji =ηδjxi
     # save deltas for the next iteration of weight change
-    input_to_hidden_deltas = [0.0, 0.0, 0.0, 0.0]
+    # used in current iteration as the weight change from the previous iteration
+    input_to_hidden_deltas = np.full((n, 17), 0)
+    # print input_to_hidden_deltas.shape #4x17
     # icount = 0
     # jcount = 0
     for i in range(len(X[0:3])):
@@ -188,8 +190,8 @@ def back_propagation(hidden_activations, output_activations, target):
         # icount += 1
         # jcount = 0
         for j in range(len(hidden_activations)):
-            print "j ", jcount
-            jcount += 1
+            # print "j ", jcount
+            # jcount += 1
             # print input_to_hidden_weights[j][i]
             # print "k ", k
             # print "old weight ", hidden_to_output_weights[k][j]
@@ -197,7 +199,7 @@ def back_propagation(hidden_activations, output_activations, target):
             # input_to_hidden_deltas[j][i] is the previous iteration's change in weights
 ###            delta = eta * hidden_layer_error[j]*X[j][i] + alpha*input_to_hidden_deltas[j][i]
             # save deltas for the next iteration of weight change
-            input_to_hidden_deltas.append(delta)
+            input_to_hidden_deltas[j][i] = delta
             # update weight
             input_to_hidden_weights[j][i] = input_to_hidden_weights[j][i] + delta
             # print "new weight ", hidden_to_output_weights[k][j]
