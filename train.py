@@ -29,18 +29,18 @@ def forward_propagation(row):
     # transpose row vector for matrix multiplication
     # print row.shape #17,
     X_row = np.mat(row)
-    #print X_row.shape
+    # print "X row shape", X_row.shape #1x17
     X_col = X_row.transpose()
     # # X[0,:][np.newaxis, :].T
     # # X[0,:][None].T
-    ###print X_col.shape
+    # print "X col shape", X_col.shape #17x1
     ##print X_col
 
     # forward propagation
     # initial run of data, use sigmoid activation function
     # pass in dot products of inputs and weights
     hidden_layer = sigmoid(np.dot(input_to_hidden_weights, X_col), False)
-    # print hidden_layer.shape  # 4x1
+    # print "hidden layer shape", hidden_layer.shape  # 4x1
     # print "hidden layer", hidden_layer
     # print hidden_layer.dtype # float64
 
@@ -52,7 +52,8 @@ def forward_propagation(row):
     bias_input_hidden_layer = np.full((1, 1), 1.0)
     # print bias_input_hidden_layer
     hidden_layer_concat = np.concatenate((hidden_layer, bias_input_hidden_layer), axis=0)
-    # print hidden_layer_concat.shape
+    # print "hidden layer concat shape", hidden_layer_concat.shape #5x1
+    # print "hidden layer in forward prop", hidden_layer_concat
 
     # matrix multiply (hidden layer) dot (weights from hidden -> output)
     output_layer = np.dot(hidden_to_output_weights, hidden_layer_concat)
@@ -69,7 +70,7 @@ def forward_propagation(row):
 
 ################################################################################################
 
-def back_propagation(hidden_activations, output_activations, target):
+def back_propagation(hidden_activations_concat, output_activations, target):
     """
     Function called in train()
     The the back-propagation algorithm is used
@@ -124,7 +125,7 @@ def back_propagation(hidden_activations, output_activations, target):
     # For each hidden unit j, calculate error term δj :
     # δj ← hj(1−hj) ( (∑ k∈output units) wkj δk )
     # h_j is activation of each hidden unit j
-    for j in hidden_activations:
+    for j in hidden_activations_concat:
         output_node_index = 0 # reset counter for use in summing
         output_sum = 0 # keeps track of (∑ k∈output units) wkj δk )
         # get the sum of weight[k][j]*node_error for all output units
@@ -160,13 +161,33 @@ def back_propagation(hidden_activations, output_activations, target):
     #   wkj ← wkj +Δwkj
     #   where
     #   Δwkj =ηδkhj
-    for j in range(len(hidden_activations)):
-        # print "j ", j
+    #counter to make sure all weights are being updated
+    no_change = 0
+    print "\nhidden to output weights in backprop:\n", hidden_to_output_weights
+    # print "hidden activations concat len: ", (len(hidden_activations_concat))
+    # print "hidden activations concat:\n", hidden_activations_concat
+    # print "output activations len", (len(output_activations))
+    # print "output activations:\n", output_activations
+
+    for j in range(len(hidden_activations_concat)):
+        print "j ", j
         for k in range(len(output_activations)):
-            # print "k ", k
-            delta = eta * output_layer_error[k] * j
+            print "k ", k
+            delta = eta * output_layer_error[k] * hidden_activations_concat[j]
             # update weight
+            # print "hidden to output weights shape", hidden_to_output_weights.shape #26x5
+            hidden_to_output_weights_kj_prior = hidden_to_output_weights[k][j]
             hidden_to_output_weights[k][j] = hidden_to_output_weights[k][j] + delta
+            # counter to make sure all weights are being updated
+            if(hidden_to_output_weights[k][j] == hidden_to_output_weights_kj_prior):
+                # print "no weight change"
+                # print "k, j: ", k, j
+                no_change += 1
+    #check to make sure all weights are being updated
+    print "\nnum of weights unchanged", no_change
+    print "hidden to output weights after change\n", hidden_to_output_weights
+
+
             # print "new weight ", hidden_to_output_weights[k][j]
 
 
@@ -177,31 +198,31 @@ def back_propagation(hidden_activations, output_activations, target):
     # #   Δwji =ηδjxi
     # save deltas for the next iteration of weight change
     # used in current iteration as the weight change from the previous iteration
-    input_to_hidden_deltas = np.full((n, 17), 0)
-    # print input_to_hidden_deltas.shape #4x17
-    # print "X shape", X.shape #10000x17
-    icount = 0
-    jcount = 0
-    for i in range(len(X[0:3])):
-        print "len X ", len(X) # 10000
+    input_to_hidden_deltas = np.full((n+1, 17), 0)
+    #print input_to_hidden_deltas.shape #5x17
+    # icount = 0
+    # jcount = 0
+    for i in range(len(X[0:8])):
         # print "i ----------", icount
-        # icount += 1 # 0 -> 9999
-        jcount = 0
-        for j in range(len(hidden_activations)):
+        # icount += 1
+        # jcount = 0
+        # print "hidden activations len in backprop", (len(hidden_activations_concat)) #5
+        for j in range(len(hidden_activations_concat)):
             # print "j ", jcount
-            jcount += 1 #
+            # jcount += 1
             # print input_to_hidden_weights[j][i]
             # print "k ", k
             # print "old weight ", hidden_to_output_weights[k][j]
             # weight delta = Δw^t =η*δ_j*x_ji + αΔw^(t−1)_ji
             # input_to_hidden_deltas[j][i] is the previous iteration's change in weights
-            delta = eta * hidden_layer_error[j]*X[j][i] + alpha *input_to_hidden_deltas[j][i]
-            # # save deltas for the next iteration of weight change
-            # input_to_hidden_deltas[j][i] = delta
-            # # print input_to_hidden_deltas[j][i]
-            # # update weight:
-            # input_to_hidden_weights[j][i] = input_to_hidden_weights[j][i] + delta
-            # print "new weight ", hidden_to_output_weights[k][j]
+            delta = eta * hidden_layer_error[j]*X[j][i] + alpha*input_to_hidden_deltas[j][i]
+            # save deltas for the next iteration of weight change
+            input_to_hidden_deltas[j][i] = delta
+            # print input_to_hidden_deltas[j][i]
+            # update weight:
+            # print "input to hidden weights shape", input_to_hidden_weights.shape #4x17
+###            input_to_hidden_weights[j][i] = input_to_hidden_weights[j][i] + delta
+            # print "new weight ", hidden_to_output_weights[j][i]
 
 
 
@@ -249,18 +270,18 @@ def train(num_epochs):
         # iterate through data matrix to operate on individual training instances
         # ---> using slices [0:2] to make running the program during debug quicker
         target_row = 0 # count keeps track of which index of target to pass in
-        for row in X[0:3]:
+        for row in X[0:8]:
             hidden_layer = [] # list to hold hidden layer, to pass to back_propagation once it's filled
-            hidden_layer, Y = forward_propagation(row)
+            hidden_layer_concat, Y = forward_propagation(row)
             # print "Post feedforward call", Y.shape #26x1
             # print "Post feedforward func, output Y", Y
-            # print "Hidden layer after forward prop", hidden_layer.shape
+            # print "Hidden layer shape after forward prop", hidden_layer.shape
 
             # use back propagation to compute error and adjust weights
             # pass in activations of hidden and output layer and target letter corresponding to the row
             # that is currently being passed through the neural net
             # print X_targets[target_row]
-            back_propagation(hidden_layer, Y, X_targets[target_row])
+            back_propagation(hidden_layer_concat, Y, X_targets[target_row])
 
             # move to next row of input data to use new target
             target_row += 1

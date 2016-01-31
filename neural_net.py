@@ -107,8 +107,7 @@ X = np.concatenate((X_scaled, bias_input), axis=1)
 # and the same number of rows as units in the next layer
 # n is the number of hidden units
 input_to_hidden_weights = np.random.uniform(low= -.25, high= .25, size=(n, 17))
-# print initial_weights
-###print initial_weights.shape
+# print "input to hidden weights shape", input_to_hidden_weights.shape #4x17
 
 #### Weights from hidden layer to output layer ####
 # 5 columns to allow for bias input (one column of 1s)
