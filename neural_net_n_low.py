@@ -19,60 +19,24 @@ import random
 # after training with the UCI machine learning repository.
 # Network has 16 inputs (mapping to the 16 attributes of the letters in the data set)
 # one layer of hidden units, and 26 output units (for 26 classes of letters)
-#### Structures defined here used in experiments 1-3
+#### Structures defined here used in experiment 4 for high number of hidden units ####
 
 #################
 # hyperparameters
 #################
 
 ################
-# Experiment 1 #
+# Experiment 4 #
 ################
+# Test how changing the number of hidden units changes results
 # learning rate
 eta = 0.3
 # momentum
 alpha = 0.3
-# number of hidden units
-n = 4
-
-# ################
-# # Experiment 2 #
-# ################
-# # Test how changing the learning rate changes results
-# # low learning rate
-# eta_low = 0.05
-# # # high learning rate
-# eta_high = 0.6
-# # momentum
-# alpha = 0.3
-# # number of hidden units
-# n = 4
-#
-# ################
-# # Experiment 3 #
-# ################
-# # Test how changing the momentum changes results
-# # learning rate
-# eta = 0.3
-# # low momentum
-# alpha_low = 0.05
-# # high momentum
-# alpha_high = 0.6
-# # number of hidden units
-# n = 4
-#
-# ################
-# # Experiment 4 #
-# ################
-# # Test how changing the number of hidden units changes results
-# # learning rate
-# eta = 0.3
-# # momentum
-# alpha = 0.3
-# # smaller number of hidden units
-# n_low = 2
-# # larger number of hidden units
-# n_high = 8
+# smaller number of hidden units
+n_low = 2
+# larger number of hidden units
+n_high = 8
 
 ###############
 # function defs
@@ -209,12 +173,12 @@ X_test = np.concatenate((X_test_scaled, test_bias_input), axis=1)
 # Weight matrices have the same number of columns as units in the previous layer
 # and the same number of rows as units in the next layer
 # n is the number of hidden units
-input_to_hidden_weights = np.random.uniform(low= -.25, high= .25, size=(n, 17))
+input_to_hidden_weights = np.random.uniform(low= -.25, high= .25, size=(n_low, 17))
 # print "input to hidden weights shape", input_to_hidden_weights.shape #4x17
 
 #### Weights from hidden layer to output layer ####
 # 5 columns to allow for bias input (one column of 1s)
-hidden_to_output_weights = np.random.uniform(low= -.25, high= .25, size=(26,n+1) )
+hidden_to_output_weights = np.random.uniform(low= -.25, high= .25, size=(26,n_low+1) )
 
 ######################################################################################################
 

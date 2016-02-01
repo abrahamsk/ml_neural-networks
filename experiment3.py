@@ -74,7 +74,7 @@ def forward_propagation(row):
 
 ################################################################################################
 
-def back_propagation(hidden_activations, output_activations, target, row):
+def back_propagation(hidden_activations, output_activations, target, row, alpha):
     """
     Function called in train()
     The the back-propagation algorithm is used
@@ -308,7 +308,7 @@ def back_propagation(hidden_activations, output_activations, target, row):
 # 	3. Forward propagate the activations times weights from the hidden layer to the output layer.
 # 	4. At each output unit, determine the error E.
 # 	5. Run the back-propagation algorithm to update all weights in the network.
-def train(num_epochs):
+def train(num_epochs, alpha):
     """
     train() calls forward_propagation() and back_propagation()
     Run training examples through neural net to train for letter recognition
@@ -356,7 +356,7 @@ def train(num_epochs):
             # pass in activations of hidden and output layer and target letter corresponding to the row
             # that is currently being passed through the neural net
             # print X_targets[target_row]
-            back_propagation(hidden_layer, Y, X_targets[target_row], row)
+            back_propagation(hidden_layer, Y, X_targets[target_row], row, alpha)
 
             # move to next row of input data to use new target
             target_row += 1
@@ -507,7 +507,8 @@ def calculate_accuracy(training_data, test_data, epoch_num):
 
 ################################################################################################
 
-def plot_results(training_accuracy_list, testing_accuracy_list):
+def plot_results(training_accuracy_list_low_alpha, testing_accuracy_list_low_alpha, training_accuracy_list_high_alpha,
+                 testing_accuracy_list_high_alpha):
     """
     Plot results of accuracy computations
 
@@ -516,9 +517,11 @@ def plot_results(training_accuracy_list, testing_accuracy_list):
     # print len(training_accuracy_list)
     # print len(range(1, epochs+1))
 
-    plt.title('Accuracy: Training and Testing, Experiment 1')
-    plt.plot(range(1, epochs+1), training_accuracy_list, 'ro', label='Training')
-    plt.plot(range(1, epochs+1), testing_accuracy_list, 'b^', label='Test')
+    plt.title('Accuracy: Training and Testing, Experiment 3')
+    plt.plot(range(1, epochs+1), training_accuracy_list_low_alpha, 'ro', label='Training, alpha=0.05')
+    plt.plot(range(1, epochs+1), testing_accuracy_list_low_alpha, 'b^', label='Test, alpha=0.05')
+    plt.plot(range(1, epochs+1), training_accuracy_list_high_alpha, 'go', label='Training, alpha=0.6')
+    plt.plot(range(1, epochs+1), testing_accuracy_list_high_alpha, 'r^', label='Test, alpha=0.6')
     plt.xticks(np.arange(0, epochs+2), np.arange(0, epochs+2))
     plt.yticks(np.arange(0,1,0.1), np.arange(0,1,0.1))
     plt.ylabel('Accuracy')
@@ -553,20 +556,28 @@ ltr_to_index = dict(zip(string.ascii_uppercase, range(0,26)))
 ################################################################################################
 
 ################
-# Experiment 1 #
+# Experiment 3 #
 ################
 
 ######
 # main
 ######
-epochs = 50
+epochs = 25
 #train the neural net for <epochs> number of epochs
 # using forward and back propagation
 # lists for training and testing accuracies over multiple epochs
-training_acc_list = []
-testing_acc_list = []
-training_acc_list, testing_acc_list = train(epochs)
-print training_acc_list
-print testing_acc_list
+training_acc_list_low_alpha = []
+testing_acc_list_low_alpha = []
+training_acc_list_high_alpha = []
+testing_acc_list_high_alpha = []
+# run training with low momentum
+training_acc_list_low_alpha, testing_acc_list_low_alpha = train(epochs, alpha_low)
+print "training accuracy (low alpha) list in main:", training_acc_list_low_alpha
+print "testing accuracy (low alpha) list in main:", testing_acc_list_low_alpha
+# run training with high momentum
+training_acc_list_high_alpha, testing_acc_list_high_alpha = train(epochs, alpha_high)
+print "training accuracy (high alpha) list in main:", training_acc_list_high_alpha
+print "testing accuracy (high alpha) list in main:", testing_acc_list_high_alpha
 # plot results of accuracy testing
-plot_results(training_acc_list, testing_acc_list)
+plot_results(training_acc_list_low_alpha, testing_acc_list_low_alpha, training_acc_list_high_alpha,
+             testing_acc_list_high_alpha)

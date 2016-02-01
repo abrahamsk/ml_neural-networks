@@ -74,7 +74,8 @@ def forward_propagation(row):
 
 ################################################################################################
 
-def back_propagation(hidden_activations, output_activations, target, row):
+# n = number of hidden units
+def back_propagation(hidden_activations, output_activations, target, row, n):
     """
     Function called in train()
     The the back-propagation algorithm is used
@@ -308,7 +309,7 @@ def back_propagation(hidden_activations, output_activations, target, row):
 # 	3. Forward propagate the activations times weights from the hidden layer to the output layer.
 # 	4. At each output unit, determine the error E.
 # 	5. Run the back-propagation algorithm to update all weights in the network.
-def train(num_epochs):
+def train(num_epochs, n):
     """
     train() calls forward_propagation() and back_propagation()
     Run training examples through neural net to train for letter recognition
@@ -525,7 +526,7 @@ def plot_results(training_accuracy_list, testing_accuracy_list):
     plt.xlabel('Epoch')
     plt.grid(True)
     plt.legend(loc='upper right', numpoints=1)
-    plt.show()
+    # plt.show()
 
 
 
@@ -553,20 +554,28 @@ ltr_to_index = dict(zip(string.ascii_uppercase, range(0,26)))
 ################################################################################################
 
 ################
-# Experiment 1 #
+# Experiment 4 #
 ################
 
 ######
 # main
 ######
-epochs = 50
+epochs = 25
 #train the neural net for <epochs> number of epochs
 # using forward and back propagation
 # lists for training and testing accuracies over multiple epochs
-training_acc_list = []
-testing_acc_list = []
-training_acc_list, testing_acc_list = train(epochs)
-print training_acc_list
-print testing_acc_list
+training_acc_list_low_n = []
+testing_acc_list_low_n = []
+training_acc_list_high_n = []
+testing_acc_list_high_n = []
+# run training with low number of hidden units
+training_acc_list_low_n, testing_acc_list_low_n = train(epochs, n_low)
+print "training accuracy (low n) list in main:", training_acc_list_low_n
+print "testing accuracy (low n) list in main:", testing_acc_list_low_n
+# run training with high number of hidden units
+training_acc_list_high_n, testing_acc_list_high_n = train(epochs, n_high)
+print "training accuracy (high n) list in main:", training_acc_list_high_n
+print "testing accuracy (high n) list in main:", testing_acc_list_high_n
 # plot results of accuracy testing
-plot_results(training_acc_list, testing_acc_list)
+plot_results(training_acc_list_low_n, testing_acc_list_low_n, training_acc_list_high_n,
+             testing_acc_list_high_n)
