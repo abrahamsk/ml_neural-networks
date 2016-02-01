@@ -184,8 +184,31 @@ def back_propagation(hidden_activations, output_activations, target):
     # print "output activations len", (len(output_activations))
     # print "output activations:\n", output_activations
 
+    # save deltas for the next iteration of weight change
+    # used in current iteration as the weight change from the previous iteration
+    # hidden_to_output_deltas = np.full((n+1, 17), 0)
+    # #hidden_to_output_deltas.shape
+    # for j in range(len(hidden_activations)):
+    #     # print "j ", j
+    #     for k in range(len(output_activations)):
+    #         # print "k ", k
+    #         delta = eta * output_layer_error[k] * hidden_activations[j]
+    #         # update weight
+    #         # print "hidden to output weights shape", hidden_to_output_weights.shape #26x5
+    #         hidden_to_output_weights_kj_prior = hidden_to_output_weights[k][j]
+    #         hidden_to_output_weights[k][j] = hidden_to_output_weights[k][j] + delta
+    #         # counter to make sure all weights are being updated
+    #         if(hidden_to_output_weights[k][j] == hidden_to_output_weights_kj_prior):
+    #             # print "no weight change"
+    #             # print "k, j: ", k, j
+    #             no_change += 1
+    # #check to make sure all weights are being updated
+    # # print "\nnum of weights unchanged hidden to output", no_change
+    # # print "hidden to output weights after change\n", hidden_to_output_weights
+    # # print "new weights hidden to output:\n", hidden_to_output_weights
+
     for j in range(len(hidden_activations)):
-        # print "j ", j
+    # print "j ", j
         for k in range(len(output_activations)):
             # print "k ", k
             delta = eta * output_layer_error[k] * hidden_activations[j]
@@ -194,11 +217,11 @@ def back_propagation(hidden_activations, output_activations, target):
             hidden_to_output_weights_kj_prior = hidden_to_output_weights[k][j]
             hidden_to_output_weights[k][j] = hidden_to_output_weights[k][j] + delta
             # counter to make sure all weights are being updated
-            if(hidden_to_output_weights[k][j] == hidden_to_output_weights_kj_prior):
+            if (hidden_to_output_weights[k][j] == hidden_to_output_weights_kj_prior):
                 # print "no weight change"
                 # print "k, j: ", k, j
                 no_change += 1
-    #check to make sure all weights are being updated
+    # check to make sure all weights are being updated
     # print "\nnum of weights unchanged hidden to output", no_change
     # print "hidden to output weights after change\n", hidden_to_output_weights
     # print "new weights hidden to output:\n", hidden_to_output_weights
@@ -232,9 +255,10 @@ def back_propagation(hidden_activations, output_activations, target):
             # print "\n-------\n"
             # print "delta", delta, "= eta", eta, "hidden_layer_error[j]", hidden_layer_error[j], "* X[j][i]", X[j][
             #     i], "+ alpha", alpha, "* input_to_hidden_deltas[j][i]", input_to_hidden_deltas[j][i]
-            # delta = eta * hidden_layer_error[j]*X[j][i] + alpha*input_to_hidden_deltas[j][i]
+            delta = eta * hidden_layer_error[j]*X[j][i] + alpha*input_to_hidden_deltas[j][i]
             # save deltas for the next iteration of weight change
             input_to_hidden_deltas[j][i] = delta
+            # print "input to hidden delta:", input_to_hidden_deltas[j][i]
 
             input_to_hidden_weights_ji_prior = input_to_hidden_weights[j][i]
             # print "prior weight", input_to_hidden_weights_ji_prior
@@ -484,7 +508,7 @@ def plot_results(training_accuracy_list, testing_accuracy_list):
     plt.xlabel('Epoch')
     plt.grid(True)
     plt.legend(loc='upper right', numpoints=1)
-    plt.show()
+    # plt.show()
 
 
 
