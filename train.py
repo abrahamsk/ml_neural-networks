@@ -191,10 +191,10 @@ def back_propagation(hidden_activations, output_activations, target):
     for j in range(len(hidden_activations)):
         # print "j ", j
         for k in range(len(output_activations)):
-            print "\n"
-            print "k:", k
-            print "j:", j
-            print hidden_activations
+            # print "\n"
+            # print "k:", k #0 -> 25
+            # print "j:", j #0 -> 3
+            # print hidden_activations #4x1
             ###delta = eta * output_layer_error[k] * hidden_activations[j]
             delta = eta * output_layer_error[k]*hidden_activations[j] + alpha*hidden_to_output_deltas[k][j]
             # save deltas for the next iteration of weight change
