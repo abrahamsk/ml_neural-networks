@@ -345,7 +345,7 @@ def train(num_epochs):
         # ---> using slices to make running the program during debug quicker
         target_row = 0 # count keeps track of which index of target to pass in
         # for row in X[0:8]:
-        for row in X:
+        for row in X[0:20]:
             hidden_layer = [] # list to hold hidden layer, to pass to back_propagation once it's filled
             hidden_layer, Y = forward_propagation(row)
             # print "Post feedforward call", Y.shape #26x1
@@ -363,12 +363,12 @@ def train(num_epochs):
 
         # increment epoch after all input data is processed
         epoch_increment += 1
-        print "\nepoch incremented", epoch_increment
+        # print "\nepoch incremented", epoch_increment
 
         # After each epoch, calculate the network's accuracy
         # on the training set and the test set
         # training_accuracy, testing_accuracy = calculate_accuracy(X[0:8], X_test[0:8], epoch_increment)
-        training_accuracy, testing_accuracy = calculate_accuracy(X, X_test, epoch_increment)
+        training_accuracy, testing_accuracy = calculate_accuracy(X[0:20], X_test[0:20], epoch_increment)
         training_acc_list.append(training_accuracy)
         testing_acc_list.append(testing_accuracy)
 
@@ -525,7 +525,7 @@ def plot_results(training_accuracy_list, testing_accuracy_list):
     plt.xlabel('Epoch')
     plt.grid(True)
     plt.legend(loc='upper right', numpoints=1)
-    plt.show()
+    # plt.show()
 
 
 
@@ -559,7 +559,7 @@ ltr_to_index = dict(zip(string.ascii_uppercase, range(0,26)))
 ######
 # main
 ######
-epochs = 5
+epochs = 50
 #train the neural net for <epochs> number of epochs
 # using forward and back propagation
 # lists for training and testing accuracies over multiple epochs

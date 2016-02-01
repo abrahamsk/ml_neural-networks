@@ -19,17 +19,60 @@ import random
 # after training with the UCI machine learning repository.
 # Network has 16 inputs (mapping to the 16 attributes of the letters in the data set)
 # one layer of hidden units, and 26 output units (for 26 classes of letters)
-#### Structures defined here used in train.py
+#### Structures defined here used in experiment1.py
 
 #################
 # hyperparameters
 #################
+
+################
+# Experiment 1 #
+################
 # learning rate
 eta = 0.3
 # momentum
 alpha = 0.3
 # number of hidden units
 n = 4
+
+# ################
+# # Experiment 2 #
+# ################
+# # Test how changing the learning rate changes results
+# # low learning rate
+# eta = 0.5
+# # high learning rate
+# eta = 0.6
+# # momentum
+# alpha = 0.3
+# # number of hidden units
+# n = 4
+#
+# ################
+# # Experiment 3 #
+# ################
+# # Test how changing the momentum changes results
+# # learning rate
+# eta = 0.3
+# # low momentum
+# alpha = 0.05
+# # high momentum
+# alpha = 0.6
+# # number of hidden units
+# n = 4
+#
+# ################
+# # Experiment 4 #
+# ################
+# # Test how changing the number of hidden units changes results
+# # learning rate
+# eta = 0.3
+# # momentum
+# alpha = 0.3
+# # smaller number of hidden units
+# n = 4
+# # larger number of hidden units
+# n = 8
 
 ###############
 # function defs
@@ -171,7 +214,7 @@ input_to_hidden_weights = np.random.uniform(low= -.25, high= .25, size=(n, 17))
 
 #### Weights from hidden layer to output layer ####
 # 5 columns to allow for bias input (one column of 1s)
-hidden_to_output_weights = np.random.uniform(low= -.25, high= .25, size=(26,5) )
+hidden_to_output_weights = np.random.uniform(low= -.25, high= .25, size=(26,n+1) )
 
 ######################################################################################################
 
