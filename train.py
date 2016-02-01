@@ -186,10 +186,33 @@ def back_propagation(hidden_activations, output_activations, target):
 
     # save deltas for the next iteration of weight change
     # used in current iteration as the weight change from the previous iteration
-    # hidden_to_output_deltas = np.full((n+1, 17), 0)
-    # #hidden_to_output_deltas.shape
+    hidden_to_output_deltas = np.full((26, n+1), 0)
+    # print hidden_to_output_deltas.shape #26x5
+    for j in range(len(hidden_activations)):
+        # print "j ", j
+        for k in range(len(output_activations)):
+            # print "k ", k
+            ###delta = eta * output_layer_error[k] * hidden_activations[j]
+            delta = eta * output_layer_error[k]*hidden_activations[k][j] + alpha*hidden_to_output_deltas[k][j]
+            # save deltas for the next iteration of weight change
+            hidden_to_output_deltas[k][j] = delta
+
+            # update weight
+            # print "hidden to output weights shape", hidden_to_output_weights.shape #26x5
+            hidden_to_output_weights_kj_prior = hidden_to_output_weights[k][j]
+            hidden_to_output_weights[k][j] = hidden_to_output_weights[k][j] + delta
+            # counter to make sure all weights are being updated
+            if(hidden_to_output_weights[k][j] == hidden_to_output_weights_kj_prior):
+                # print "no weight change"
+                # print "k, j: ", k, j
+                no_change += 1
+    #check to make sure all weights are being updated
+    # print "\nnum of weights unchanged hidden to output", no_change
+    # print "hidden to output weights after change\n", hidden_to_output_weights
+    # print "new weights hidden to output:\n", hidden_to_output_weights
+######################
     # for j in range(len(hidden_activations)):
-    #     # print "j ", j
+    # # print "j ", j
     #     for k in range(len(output_activations)):
     #         # print "k ", k
     #         delta = eta * output_layer_error[k] * hidden_activations[j]
@@ -198,34 +221,15 @@ def back_propagation(hidden_activations, output_activations, target):
     #         hidden_to_output_weights_kj_prior = hidden_to_output_weights[k][j]
     #         hidden_to_output_weights[k][j] = hidden_to_output_weights[k][j] + delta
     #         # counter to make sure all weights are being updated
-    #         if(hidden_to_output_weights[k][j] == hidden_to_output_weights_kj_prior):
+    #         if (hidden_to_output_weights[k][j] == hidden_to_output_weights_kj_prior):
     #             # print "no weight change"
     #             # print "k, j: ", k, j
     #             no_change += 1
-    # #check to make sure all weights are being updated
+    # # check to make sure all weights are being updated
     # # print "\nnum of weights unchanged hidden to output", no_change
     # # print "hidden to output weights after change\n", hidden_to_output_weights
     # # print "new weights hidden to output:\n", hidden_to_output_weights
-
-    for j in range(len(hidden_activations)):
-    # print "j ", j
-        for k in range(len(output_activations)):
-            # print "k ", k
-            delta = eta * output_layer_error[k] * hidden_activations[j]
-            # update weight
-            # print "hidden to output weights shape", hidden_to_output_weights.shape #26x5
-            hidden_to_output_weights_kj_prior = hidden_to_output_weights[k][j]
-            hidden_to_output_weights[k][j] = hidden_to_output_weights[k][j] + delta
-            # counter to make sure all weights are being updated
-            if (hidden_to_output_weights[k][j] == hidden_to_output_weights_kj_prior):
-                # print "no weight change"
-                # print "k, j: ", k, j
-                no_change += 1
-    # check to make sure all weights are being updated
-    # print "\nnum of weights unchanged hidden to output", no_change
-    # print "hidden to output weights after change\n", hidden_to_output_weights
-    # print "new weights hidden to output:\n", hidden_to_output_weights
-
+#####################
 
     #### Change weights from input -> hidden layer ####
     # # For each weight wji from the input to hidden layer:
