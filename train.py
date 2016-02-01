@@ -244,15 +244,15 @@ def back_propagation(hidden_activations, output_activations, target, row):
     input_to_hidden_weights_ji_prior = 0
     # save deltas for the next iteration of weight change
     # used in current iteration as the weight change from the previous iteration
-    input_to_hidden_deltas = np.full((len(hidden_activations)+1, len(X)), 0)
-    #print input_to_hidden_deltas.shape #5x10000
+    input_to_hidden_deltas = np.full((len(hidden_activations), len(row)), 0)
+    # print input_to_hidden_deltas.shape #4x17
     no_change_input_to_hidden_weight = 0
     # icount = 0
     # jcount = 0
     # print "len X", len(X) #len=10000
     # print "len hidden activations", len(hidden_activations) #len=4
     # for i in range(len(X[0:8])):
-    for i in range(len(X)):
+    for i in range(len(row)):
         # print "i ----------", icount
         # icount += 1
         # jcount = 0
@@ -268,7 +268,7 @@ def back_propagation(hidden_activations, output_activations, target, row):
             # print "\n-------\n"
             # print "delta", delta, "= eta", eta, "hidden_layer_error[j]", hidden_layer_error[j], "* X[j][i]", X[j][
             #     i], "+ alpha", alpha, "* input_to_hidden_deltas[j][i]", input_to_hidden_deltas[j][i]
-            delta = eta * hidden_layer_error[j]*X[i][j] + alpha*input_to_hidden_deltas[j][i]
+            delta = eta * hidden_layer_error[j]*X[j][i] + alpha*input_to_hidden_deltas[j][i]
             # print delta
             # save deltas for the next iteration of weight change
             input_to_hidden_deltas[j][i] = delta
@@ -286,11 +286,12 @@ def back_propagation(hidden_activations, output_activations, target, row):
 
             # counter to make sure all weights are being updated
             if(input_to_hidden_weights[j][i] == input_to_hidden_weights_ji_prior):
-                print "no weight change"
+                # print "no weight change"
                 # print "j, i: ", j, i
                 no_change_input_to_hidden_weight += 1
     #check to make sure all weights are being updated
-    # print "\nnum of weights unchanged input to hidden", no_change_input_to_hidden_weight
+    if(no_change_input_to_hidden_weight > 0):
+        print "\nnum of weights unchanged input to hidden", no_change_input_to_hidden_weight
     # print "input to hidden weights after change\n", input_to_hidden_weights
     # print input_to_hidden_weights
 
@@ -524,7 +525,7 @@ def plot_results(training_accuracy_list, testing_accuracy_list):
     plt.xlabel('Epoch')
     plt.grid(True)
     plt.legend(loc='upper right', numpoints=1)
-    # plt.show()
+    plt.show()
 
 
 
