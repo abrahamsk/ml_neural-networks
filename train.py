@@ -7,10 +7,14 @@
 # Katie Abrahams, abrahake@pdx.edu
 # 1/28/16
 
+
+from __future__ import division # want float and not int division
 # import data structures, variables, and neural net from neural_net
 # data structures in the global scope
 from neural_net import *
 import string
+from numpy import array
+
 
 ###############
 # function defs
@@ -314,17 +318,127 @@ def train(num_epochs):
             # move to next row of input data to use new target
             target_row += 1
 
-        # calculate accuracy after each epoch
+        # After each epoch, calculate the network's accuracy
+        # on the training set and the test set
+        calculate_accuracy(X[0:8], X_test[0:8])
 
         # increment epoch after all input data is processed
         epoch_increment += 1
-
 
 
     # print "done with epochs"
 
     # use a list for targets: list of 26 with one valued at .9 and the rest valued at .1
     # use error to calculate updated weights
+
+################################################################################################
+
+def calculate_accuracy(training_data, test_data):
+    """
+    After each epoch, calculate the network's accuracy
+    on the training set and the test set
+    :param output_activations:
+    :param targets:
+    :return:
+    """
+    # counters for neural net votes
+    correct_train_vote = 0
+    correct_test_vote = 0
+
+    # Training data
+    # use forward_propagation(row) to calculate predictions for training data
+    training_predictions = []
+    target_row = 0
+    for row in training_data:
+        hidden_layer, Y_train = forward_propagation(row)
+        training_predictions.append(Y_train)
+
+        # map target value to output node (e.g. A == node[0])
+        target_unit = ltr_to_index[X_targets[target_row].tostring()]
+        # print "target unit:", target_unit
+
+        # calculate target for each node
+        # for node matching letter, t = .9, otherwise t = .1
+        output_layer_targets = [.1 for i in range(0, 26)]
+        output_layer_targets[target_unit] = .9
+        # print "output layer targets", output_layer_targets
+
+        # print "------"
+        # print "Y_train:\n", Y_train
+        # print "======"
+        # compare highest valued output to target unit of .9
+        # to see if the neurons have the correct output
+        max_value = max(Y_train)
+        Y_train_list = Y_train.tolist()
+        max_index = Y_train_list.index(max_value)
+        # print max_value, max_index
+
+        # test to see if max value in neural net output
+        # matches the node with the highest target
+        # if so, the neural net got the letter correct
+        if max_index == target_unit:
+            correct_train_vote += 1
+
+        # move to next row of input data to use new target
+        target_row += 1
+
+    print "\n-------------------"
+    print "correct train vote", correct_train_vote
+    print "len of training predictions", len(training_predictions)
+    training_accuracy = correct_train_vote/len(training_predictions)
+    print "training accuracy", training_accuracy
+    print "-------------------"
+
+    ### Test data ####
+    # use forward_propagation(row) to calculate predictions for testing data
+    test_predictions = []
+
+    # reset counter for iterating through letter targets
+    target_row = 0
+    for row in test_data:
+        hidden_layer, Y_test = forward_propagation(row)
+        test_predictions.append(Y_test)
+
+        # map target value to output node (e.g. A == node[0])
+        target_unit = ltr_to_index[X_targets[target_row].tostring()]
+        # print "target unit:", target_unit
+
+        # calculate target for each node
+        # for node matching letter, t = .9, otherwise t = .1
+        output_layer_targets = [.1 for i in range(0, 26)]
+        output_layer_targets[target_unit] = .9
+        # print "output layer targets", output_layer_targets
+
+        # compare highest valued output to target unit of .9
+        # to see if the neurons have the correct output
+        max_value = max(Y_test)
+        Y_test_list = Y_test.tolist()
+        max_index = Y_test_list.index(max_value)
+        # print max_value, max_index
+
+        # test to see if max value in neural net output
+        # matches the node with the highest target
+        # if so, the neural net got the letter correct
+        if max_index == target_unit:
+            correct_test_vote += 1
+
+        # move to next row of input data to use new target
+        target_row += 1
+
+    print "\n+++++++++++++++++++"
+    print "correct test vote", correct_test_vote
+    print "len of test predictions", len(test_predictions)
+    testing_accuracy = correct_test_vote/len(test_predictions)
+    print "testing accuracy", testing_accuracy
+    print "+++++++++++++++++++"
+
+
+    # print "\ntraining predictions:\n", training_predictions
+    # print "max from list "
+    # print "------------------"
+    # print "\ntest predictions:\n", test_predictions
+
+
 
 ################################################################################################
 
