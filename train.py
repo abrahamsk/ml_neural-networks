@@ -284,6 +284,9 @@ def train(num_epochs):
     """
     epoch_increment = 0
 
+    training_acc_list = []
+    testing_acc_list = []
+
     # run training for <num_epochs> number of epochs (defined before func is called in main)
     # each epoch runs through entire training set
     for iter in xrange(num_epochs):
@@ -318,27 +321,34 @@ def train(num_epochs):
             # move to next row of input data to use new target
             target_row += 1
 
-        # After each epoch, calculate the network's accuracy
-        # on the training set and the test set
-        calculate_accuracy(X[0:8], X_test[0:8])
-
         # increment epoch after all input data is processed
         epoch_increment += 1
+        print "\nepoch incremented", epoch_increment
+
+        # After each epoch, calculate the network's accuracy
+        # on the training set and the test set
+        training_accuracy, testing_accuracy = calculate_accuracy(X[0:8], X_test[0:8], epoch_increment)
+        training_acc_list.append(training_accuracy)
+        testing_acc_list.append(testing_accuracy)
+
+        print "\ntraining list in train", training_acc_list
+        print "testing list in train", testing_acc_list
 
 
     # print "done with epochs"
+    return training_acc_list, testing_acc_list
 
     # use a list for targets: list of 26 with one valued at .9 and the rest valued at .1
     # use error to calculate updated weights
 
 ################################################################################################
 
-def calculate_accuracy(training_data, test_data):
+def calculate_accuracy(training_data, test_data, epoch_num):
     """
     After each epoch, calculate the network's accuracy
     on the training set and the test set
-    :param targets:
-    :return:
+    :param training_data, test_data, epoch_num
+    :return training_accuracy, testing_accuracy:
     """
     # counters for neural net votes
     correct_train_vote = 0
@@ -377,24 +387,24 @@ def calculate_accuracy(training_data, test_data):
         max_value = max(Y_train)
         Y_train_list = Y_train.tolist()
         max_index = Y_train_list.index(max_value)
-        print "\n-------------------"
-        print max_value, max_index, target_unit
+        # print "\n-------------------"
+        # print max_value, max_index, target_unit
 
         # test to see if max value in neural net output
         # matches the node with the highest target
         # if so, the neural net got the letter correct
         if max_index == target_unit:
-            print "match!"
+            # print "match!"
             correct_train_vote += 1
 
         # move to next row of input data to use new target
         target_row += 1
 
-    print "correct train vote", correct_train_vote
-    print "len of training predictions", len(training_predictions)
+    # print "correct train vote", correct_train_vote
+    # print "len of training predictions", len(training_predictions)
     training_accuracy = correct_train_vote/len(training_predictions)
-    print "training accuracy", training_accuracy
-    print "-------------------"
+    # print "training accuracy", training_accuracy
+    # print "-------------------"
 
     ### Test data ####
     # use forward_propagation(row) to calculate predictions for testing data
@@ -427,24 +437,26 @@ def calculate_accuracy(training_data, test_data):
         max_value = max(Y_test)
         Y_test_list = Y_test.tolist()
         max_index = Y_test_list.index(max_value)
-        print "\n+++++++++++++++++++"
-        print max_value, max_index, target_unit
+        # print "\n+++++++++++++++++++"
+        # print max_value, max_index, target_unit
 
         # test to see if max value in neural net output
         # matches the node with the highest target
         # if so, the neural net got the letter correct
         if max_index == target_unit:
-            print "match!"
+            # print "match!"
             correct_test_vote += 1
 
         # move to next row of input data to use new target
         target_row += 1
 
-    print "correct test vote", correct_test_vote
-    print "len of test predictions", len(test_predictions)
+    # print "correct test vote", correct_test_vote
+    # print "len of test predictions", len(test_predictions)
     testing_accuracy = correct_test_vote/len(test_predictions)
-    print "testing accuracy", testing_accuracy
-    print "+++++++++++++++++++"
+    # print "testing accuracy", testing_accuracy
+    # print "+++++++++++++++++++"
+
+    return training_accuracy, testing_accuracy
 
     # print "\ntraining predictions:\n", training_predictions
     # print "max from list "
@@ -454,18 +466,24 @@ def calculate_accuracy(training_data, test_data):
 
 ################################################################################################
 
-def plot_results():
+def plot_results(training_accuracy_list, testing_accuracy_list):
     """
     Plot results of accuracy computations
+
     :return:
     """
+    # print len(training_accuracy_list)
+    # print len(range(1, epochs+1))
 
-    plt.title('Accuracy, training and testing')
-    plt.plot([1, 2, 3], [4, 5, 6], 'ro')
-    plt.xticks(np.arange(0, 26), string.ascii_uppercase)
-    plt.yticks(np.arange(0, 26), string.ascii_uppercase)
-    plt.ylabel('Actual letter')
-    plt.xlabel('Predicted letter')
+    plt.title('Accuracy: Training and Testing')
+    plt.plot(range(1, epochs+1), training_accuracy_list, 'ro', label='Training')
+    plt.plot(range(1, epochs+1), testing_accuracy_list, 'b^', label='Test')
+    plt.xticks(np.arange(0, epochs+2), np.arange(0, epochs+2))
+    plt.yticks(np.arange(0,1,0.1), np.arange(0,1,0.1))
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.grid(True)
+    plt.legend(loc='upper right', numpoints=1)
     plt.show()
 
 
@@ -503,6 +521,11 @@ ltr_to_index = dict(zip(string.ascii_uppercase, range(0,26)))
 epochs = 5
 #train the neural net for <epochs> number of epochs
 # using forward and back propagation
-train(epochs)
+# lists for training and testing accuracies over multiple epochs
+training_acc_list = []
+testing_acc_list = []
+training_acc_list, testing_acc_list = train(epochs)
+print training_acc_list
+print testing_acc_list
 # plot results of accuracy testing
-plot_results()
+plot_results(training_acc_list, testing_acc_list)
