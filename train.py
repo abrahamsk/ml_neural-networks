@@ -74,14 +74,15 @@ def forward_propagation(row):
 
 ################################################################################################
 
-def back_propagation(hidden_activations, output_activations, target):
+def back_propagation(hidden_activations, output_activations, target, row):
     """
     Function called in train()
     The the back-propagation algorithm is used
     during training to update all weights in the network.
     Pass in activation of output layer and
     target letter corresponding to the row that is currently being passed through the neural net
-    :return: error
+    :param hidden_activations, output_activations, target, row of input:
+    :return error:
     """
 
     #### 2. Calculate the error terms ####
@@ -198,6 +199,7 @@ def back_propagation(hidden_activations, output_activations, target):
             ###delta = eta * output_layer_error[k] * hidden_activations[j]
             delta = eta * output_layer_error[k]*hidden_activations[j] + alpha*hidden_to_output_deltas[k][j]
             # save deltas for the next iteration of weight change
+            # print delta
             hidden_to_output_deltas[k][j] = delta
 
             # update weight
@@ -239,34 +241,39 @@ def back_propagation(hidden_activations, output_activations, target):
     # #   wji ←wji +Δwji
     # #   where
     # #   Δwji =ηδjxi
+    input_to_hidden_weights_ji_prior = 0
     # save deltas for the next iteration of weight change
     # used in current iteration as the weight change from the previous iteration
-    input_to_hidden_deltas = np.full((n+1, 17), 0)
-    #print input_to_hidden_deltas.shape #5x17
+    input_to_hidden_deltas = np.full((len(hidden_activations)+1, len(X)), 0)
+    #print input_to_hidden_deltas.shape #5x10000
     no_change_input_to_hidden_weight = 0
     # icount = 0
     # jcount = 0
-    for i in range(len(X[0:8])):
+    # print "len X", len(X) #len=10000
+    # print "len hidden activations", len(hidden_activations) #len=4
+    # for i in range(len(X[0:8])):
+    for i in range(len(X)):
         # print "i ----------", icount
         # icount += 1
         # jcount = 0
         # print "hidden activations len in backprop:", (len(hidden_activations)) #len=5
         for j in range(len(hidden_activations)):
+            # print X.shape #10000x17
             # print "j ", jcount
             # jcount += 1
             # print input_to_hidden_weights[j][i]
             # print "k ", k
-            # print "old weight ", hidden_to_output_weights[k][j]
             # weight delta = Δw^t =η*δ_j*x_ji + αΔw^(t−1)_ji
             # input_to_hidden_deltas[j][i] is the previous iteration's change in weights
             # print "\n-------\n"
             # print "delta", delta, "= eta", eta, "hidden_layer_error[j]", hidden_layer_error[j], "* X[j][i]", X[j][
             #     i], "+ alpha", alpha, "* input_to_hidden_deltas[j][i]", input_to_hidden_deltas[j][i]
-            delta = eta * hidden_layer_error[j]*X[j][i] + alpha*input_to_hidden_deltas[j][i]
+            delta = eta * hidden_layer_error[j]*X[i][j] + alpha*input_to_hidden_deltas[j][i]
+            # print delta
             # save deltas for the next iteration of weight change
             input_to_hidden_deltas[j][i] = delta
             # print "input to hidden delta:", input_to_hidden_deltas[j][i]
-
+            # print input_to_hidden_weights.shape #4x17
             input_to_hidden_weights_ji_prior = input_to_hidden_weights[j][i]
             # print "prior weight", input_to_hidden_weights_ji_prior
             # print "delta:", delta
@@ -336,7 +343,8 @@ def train(num_epochs):
         # iterate through data matrix to operate on individual training instances
         # ---> using slices to make running the program during debug quicker
         target_row = 0 # count keeps track of which index of target to pass in
-        for row in X[0:8]:
+        # for row in X[0:8]:
+        for row in X:
             hidden_layer = [] # list to hold hidden layer, to pass to back_propagation once it's filled
             hidden_layer, Y = forward_propagation(row)
             # print "Post feedforward call", Y.shape #26x1
@@ -347,7 +355,7 @@ def train(num_epochs):
             # pass in activations of hidden and output layer and target letter corresponding to the row
             # that is currently being passed through the neural net
             # print X_targets[target_row]
-            back_propagation(hidden_layer, Y, X_targets[target_row])
+            back_propagation(hidden_layer, Y, X_targets[target_row], row)
 
             # move to next row of input data to use new target
             target_row += 1
@@ -358,7 +366,8 @@ def train(num_epochs):
 
         # After each epoch, calculate the network's accuracy
         # on the training set and the test set
-        training_accuracy, testing_accuracy = calculate_accuracy(X[0:8], X_test[0:8], epoch_increment)
+        # training_accuracy, testing_accuracy = calculate_accuracy(X[0:8], X_test[0:8], epoch_increment)
+        training_accuracy, testing_accuracy = calculate_accuracy(X, X_test, epoch_increment)
         training_acc_list.append(training_accuracy)
         testing_acc_list.append(testing_accuracy)
 
