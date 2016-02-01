@@ -13,7 +13,7 @@ from __future__ import division # want float and not int division
 # data structures in the global scope
 from neural_net import *
 import string
-from numpy import array
+import matplotlib.pyplot as plt
 
 
 ###############
@@ -337,7 +337,6 @@ def calculate_accuracy(training_data, test_data):
     """
     After each epoch, calculate the network's accuracy
     on the training set and the test set
-    :param output_activations:
     :param targets:
     :return:
     """
@@ -345,17 +344,24 @@ def calculate_accuracy(training_data, test_data):
     correct_train_vote = 0
     correct_test_vote = 0
 
-    # Training data
+    #### Training data ####
     # use forward_propagation(row) to calculate predictions for training data
     training_predictions = []
+    # record values for plotting
+    training_letter_vote = []
+    training_letter_actual = []
     target_row = 0
     for row in training_data:
         hidden_layer, Y_train = forward_propagation(row)
         training_predictions.append(Y_train)
 
         # map target value to output node (e.g. A == node[0])
-        target_unit = ltr_to_index[X_targets[target_row].tostring()]
+        target_ltr = X_targets[target_row].tostring()
+        target_unit = ltr_to_index[target_ltr]
         # print "target unit:", target_unit
+        # record target letter for plotting
+        training_letter_actual.append(target_ltr)
+        # print training_letter_actual
 
         # calculate target for each node
         # for node matching letter, t = .9, otherwise t = .1
@@ -371,18 +377,19 @@ def calculate_accuracy(training_data, test_data):
         max_value = max(Y_train)
         Y_train_list = Y_train.tolist()
         max_index = Y_train_list.index(max_value)
-        # print max_value, max_index
+        print "\n-------------------"
+        print max_value, max_index, target_unit
 
         # test to see if max value in neural net output
         # matches the node with the highest target
         # if so, the neural net got the letter correct
         if max_index == target_unit:
+            print "match!"
             correct_train_vote += 1
 
         # move to next row of input data to use new target
         target_row += 1
 
-    print "\n-------------------"
     print "correct train vote", correct_train_vote
     print "len of training predictions", len(training_predictions)
     training_accuracy = correct_train_vote/len(training_predictions)
@@ -392,7 +399,9 @@ def calculate_accuracy(training_data, test_data):
     ### Test data ####
     # use forward_propagation(row) to calculate predictions for testing data
     test_predictions = []
-
+    # record values for plotting
+    test_letter_vote = []
+    test_letter_actual = []
     # reset counter for iterating through letter targets
     target_row = 0
     for row in test_data:
@@ -400,8 +409,12 @@ def calculate_accuracy(training_data, test_data):
         test_predictions.append(Y_test)
 
         # map target value to output node (e.g. A == node[0])
-        target_unit = ltr_to_index[X_targets[target_row].tostring()]
+        target_ltr = X_targets[target_row].tostring()
+        target_unit = ltr_to_index[target_ltr]
         # print "target unit:", target_unit
+        # record target letter for plotting
+        test_letter_actual.append(target_ltr)
+        # print test_letter_actual
 
         # calculate target for each node
         # for node matching letter, t = .9, otherwise t = .1
@@ -414,29 +427,46 @@ def calculate_accuracy(training_data, test_data):
         max_value = max(Y_test)
         Y_test_list = Y_test.tolist()
         max_index = Y_test_list.index(max_value)
-        # print max_value, max_index
+        print "\n+++++++++++++++++++"
+        print max_value, max_index, target_unit
 
         # test to see if max value in neural net output
         # matches the node with the highest target
         # if so, the neural net got the letter correct
         if max_index == target_unit:
+            print "match!"
             correct_test_vote += 1
 
         # move to next row of input data to use new target
         target_row += 1
 
-    print "\n+++++++++++++++++++"
     print "correct test vote", correct_test_vote
     print "len of test predictions", len(test_predictions)
     testing_accuracy = correct_test_vote/len(test_predictions)
     print "testing accuracy", testing_accuracy
     print "+++++++++++++++++++"
 
-
     # print "\ntraining predictions:\n", training_predictions
     # print "max from list "
     # print "------------------"
     # print "\ntest predictions:\n", test_predictions
+
+
+################################################################################################
+
+def plot_results():
+    """
+    Plot results of accuracy computations
+    :return:
+    """
+
+    plt.title('Accuracy, training and testing')
+    plt.plot([1, 2, 3], [4, 5, 6], 'ro')
+    plt.xticks(np.arange(0, 26), string.ascii_uppercase)
+    plt.yticks(np.arange(0, 26), string.ascii_uppercase)
+    plt.ylabel('Actual letter')
+    plt.xlabel('Predicted letter')
+    plt.show()
 
 
 
@@ -474,3 +504,5 @@ epochs = 5
 #train the neural net for <epochs> number of epochs
 # using forward and back propagation
 train(epochs)
+# plot results of accuracy testing
+plot_results()
