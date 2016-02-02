@@ -213,29 +213,11 @@ def back_propagation(hidden_activations, output_activations, target, row):
                 # print "k, j: ", k, j
                 no_change += 1
     #check to make sure all weights are being updated
-    # print "\nnum of weights unchanged hidden to output", no_change
+    # if(no_change > 0):
+    #     print "\nnum of weights unchanged hidden to output", no_change
     # print "hidden to output weights after change\n", hidden_to_output_weights
     # print "new weights hidden to output:\n", hidden_to_output_weights
-######################
-    # for j in range(len(hidden_activations)):
-    # # print "j ", j
-    #     for k in range(len(output_activations)):
-    #         # print "k ", k
-    #         delta = eta * output_layer_error[k] * hidden_activations[j]
-    #         # update weight
-    #         # print "hidden to output weights shape", hidden_to_output_weights.shape #26x5
-    #         hidden_to_output_weights_kj_prior = hidden_to_output_weights[k][j]
-    #         hidden_to_output_weights[k][j] = hidden_to_output_weights[k][j] + delta
-    #         # counter to make sure all weights are being updated
-    #         if (hidden_to_output_weights[k][j] == hidden_to_output_weights_kj_prior):
-    #             # print "no weight change"
-    #             # print "k, j: ", k, j
-    #             no_change += 1
-    # # check to make sure all weights are being updated
-    # # print "\nnum of weights unchanged hidden to output", no_change
-    # # print "hidden to output weights after change\n", hidden_to_output_weights
-    # # print "new weights hidden to output:\n", hidden_to_output_weights
-#####################
+
 
     #### Change weights from input -> hidden layer ####
     # # For each weight wji from the input to hidden layer:
@@ -291,8 +273,8 @@ def back_propagation(hidden_activations, output_activations, target, row):
                 # print "j, i: ", j, i
                 no_change_input_to_hidden_weight += 1
     #check to make sure all weights are being updated
-    if(no_change_input_to_hidden_weight > 0):
-        print "\nnum of weights unchanged input to hidden", no_change_input_to_hidden_weight
+    # if(no_change_input_to_hidden_weight > 0):
+    #     print "\nnum of weights unchanged input to hidden", no_change_input_to_hidden_weight
     # print "input to hidden weights after change\n", input_to_hidden_weights
     # print input_to_hidden_weights
 
@@ -373,8 +355,8 @@ def train(num_epochs):
         training_acc_list.append(training_accuracy)
         testing_acc_list.append(testing_accuracy)
 
-        print "\ntraining list in train", training_acc_list
-        print "testing list in train", testing_acc_list
+        # print "\ntraining list in train", training_acc_list
+        # print "testing list in train", testing_acc_list
 
 
     # print "done with epochs"
