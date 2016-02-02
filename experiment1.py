@@ -328,7 +328,6 @@ def calculate_accuracy(training_data, test_data, epoch_num):
         target_unit = ltr_to_index[target_ltr]
         # record target letter for plotting
         test_letter_actual.append(target_ltr)
-        # print test_letter_actual
 
         # calculate target for each node
         # for node matching letter, t = .9, otherwise t = .1
@@ -399,13 +398,6 @@ epochs = 50
 # lists for training and testing accuracies over multiple epochs
 training_acc_list = []
 testing_acc_list = []
-print "\n", hidden_to_output_weights
-print "\n", input_to_hidden_weights
 training_acc_list, testing_acc_list = train(epochs)
-# print training_acc_list
-# print testing_acc_list
-print "\n----------------------------------------"
-print "\n", hidden_to_output_weights
-print "\n", input_to_hidden_weights
 # plot results of accuracy testing
 plot_results(training_acc_list, testing_acc_list)
