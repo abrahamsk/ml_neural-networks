@@ -25,6 +25,7 @@ import random
 # hyperparameters
 #################
 
+# comment out parameters for experiments not currently running
 ################
 # Experiment 1 #
 ################

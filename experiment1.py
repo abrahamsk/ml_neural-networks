@@ -232,7 +232,7 @@ def train(num_epochs):
 
         # iterate through data matrix to operate on individual training instances
         target_row = 0 # count keeps track of which index of target to pass in
-        for row in X[0:20]:
+        for row in X[0:50]:
             hidden_layer = [] # list to hold hidden layer, to pass to back_propagation once it's filled
             hidden_layer, Y = forward_propagation(row)
             # use back propagation to compute error and adjust weights
@@ -248,7 +248,7 @@ def train(num_epochs):
 
         # After each epoch, calculate the network's accuracy
         # on the training set and the test set
-        training_accuracy, testing_accuracy = calculate_accuracy(X[0:20], X_test[0:20], epoch_increment)
+        training_accuracy, testing_accuracy = calculate_accuracy(X[0:50], X_test[0:50], epoch_increment)
         training_acc_list.append(training_accuracy)
         testing_acc_list.append(testing_accuracy)
         # print "\ntraining list in train", training_acc_list

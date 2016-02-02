@@ -41,3 +41,4 @@ for (i, testing_data) in enumerate(testing_data):
 
 #print letters_list_testing[0].value
 #for letter in letters_list_testing: print letter.value
+random.shuffle(letters_list_testing)

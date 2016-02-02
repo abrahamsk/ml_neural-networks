@@ -235,7 +235,7 @@ def train(num_epochs, input_to_hidden_weights, hidden_to_output_weights, n):
 
         # iterate through data matrix to operate on individual training instances
         target_row = 0 # count keeps track of which index of target to pass in
-        for row in X[0:20]:
+        for row in X[0:100]:
         # for row in X:
             hidden_layer = [] # list to hold hidden layer, to pass to back_propagation once it's filled
             hidden_layer, Y = forward_propagation(row, input_to_hidden_weights, hidden_to_output_weights)
@@ -253,7 +253,7 @@ def train(num_epochs, input_to_hidden_weights, hidden_to_output_weights, n):
 
         # After each epoch, calculate the network's accuracy
         # on the training set and the test set
-        training_accuracy, testing_accuracy = calculate_accuracy(X[0:20], X_test[0:20], epoch_increment,
+        training_accuracy, testing_accuracy = calculate_accuracy(X[0:100], X_test[0:100], epoch_increment,
         # training_accuracy, testing_accuracy = calculate_accuracy(X, X_test, epoch_increment,
                                                                  input_to_hidden_weights, hidden_to_output_weights)
         training_acc_list.append(training_accuracy)
@@ -400,7 +400,7 @@ ltr_to_index = dict(zip(string.ascii_uppercase, range(0,26)))
 ######
 # main
 ######
-epochs = 25
+epochs = 50
 #train the neural net for <epochs> number of epochs
 # using forward and back propagation
 # lists for training and testing accuracies over multiple epochs
