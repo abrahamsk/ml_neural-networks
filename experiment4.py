@@ -372,7 +372,7 @@ def plot_results(training_accuracy_list_low_n, testing_accuracy_list_low_n, trai
     # print len(training_accuracy_list)
     # print len(range(1, epochs+1))
 
-    plt.title('Accuracy: Training and Testing, Experiment 3')
+    plt.title('Accuracy: Training and Testing, Experiment 4')
     plt.plot(range(1, epochs+1), training_accuracy_list_low_n, 'ro', label='Training, n=2')
     plt.plot(range(1, epochs+1), testing_accuracy_list_low_n, 'b^', label='Test, n=2')
     plt.plot(range(1, epochs+1), training_accuracy_list_high_n, 'go', label='Training, n=8')
