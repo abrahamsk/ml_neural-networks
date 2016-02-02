@@ -386,14 +386,10 @@ def plot_results(training_accuracy_list_low_n, testing_accuracy_list_low_n, trai
     plt.show()
 
 
-
-
 ################################################################################################
 
 #### dict mapping letters to number (index of unit in output row) ####
 ltr_to_index = dict(zip(string.ascii_uppercase, range(0,26)))
-# print ltr_to_index['A'] #0
-# print ltr_to_index['Z'] #25
 
 ################################################################################################
 

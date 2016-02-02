@@ -43,6 +43,7 @@ n_high = 8
 # d sigma(z)/dz = sigma(z)x(1 - sigma(z))
 # This is useful in deriving the back-propagation algorithm
 # If derivative argument is true, return the derivative of the sigmoid
+# Derivative is not needed for this assignment, we use equations from the slides instead
 def sigmoid(z, derivative):
     if derivative:
         return sigmoid(z) * (1-sigmoid(z))
@@ -109,7 +110,6 @@ X_test = np.concatenate((X_test_scaled, test_bias_input), axis=1)
 # n is the number of hidden units
 input_to_hidden_weights_n_low = np.random.uniform(low= -.25, high= .25, size=(n_low, 17))
 input_to_hidden_weights_n_high = np.random.uniform(low= -.25, high= .25, size=(n_high, 17))
-# print "input to hidden weights shape", input_to_hidden_weights.shape #4x17
 
 #### Weights from hidden layer to output layer ####
 # 5 columns to allow for bias input (one column of 1s)
