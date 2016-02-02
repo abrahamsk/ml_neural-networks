@@ -31,7 +31,6 @@ def forward_propagation(row):
 
     # transpose row vector for matrix multiplication
     X_row = np.mat(row)
-    # print "X row shape", X_row.shape #1x17
     X_col = X_row.transpose()
 
     # forward propagation
