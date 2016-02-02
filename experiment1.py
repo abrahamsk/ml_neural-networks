@@ -399,8 +399,13 @@ epochs = 50
 # lists for training and testing accuracies over multiple epochs
 training_acc_list = []
 testing_acc_list = []
+print "\n", hidden_to_output_weights
+print "\n", input_to_hidden_weights
 training_acc_list, testing_acc_list = train(epochs)
-print training_acc_list
-print testing_acc_list
+# print training_acc_list
+# print testing_acc_list
+print "\n----------------------------------------"
+print "\n", hidden_to_output_weights
+print "\n", input_to_hidden_weights
 # plot results of accuracy testing
 plot_results(training_acc_list, testing_acc_list)
