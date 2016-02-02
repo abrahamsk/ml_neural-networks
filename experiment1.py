@@ -426,7 +426,7 @@ def calculate_accuracy(training_data, test_data, epoch_num):
 
     # print "correct train vote", correct_train_vote
     # print "len of training predictions", len(training_predictions)
-    training_accuracy = correct_train_vote/len(training_predictions)
+    training_accuracy = correct_train_vote/float(len(training_predictions))
     # print "training accuracy", training_accuracy
     # print "-------------------"
 
@@ -476,7 +476,7 @@ def calculate_accuracy(training_data, test_data, epoch_num):
 
     # print "correct test vote", correct_test_vote
     # print "len of test predictions", len(test_predictions)
-    testing_accuracy = correct_test_vote/len(test_predictions)
+    testing_accuracy = correct_test_vote/float(len(test_predictions))
     # print "testing accuracy", testing_accuracy
     # print "+++++++++++++++++++"
 

@@ -7,19 +7,16 @@
 # Katie Abrahams, abrahake@pdx.edu
 # 1/28/16
 
-import sys
-import math
 import numpy as np
 from input import letters_list_training, letters_list_testing
 # preprocessing to scale training data
 from sklearn import preprocessing
-import random
 
 # Neural network to recognize letters
 # after training with the UCI machine learning repository.
 # Network has 16 inputs (mapping to the 16 attributes of the letters in the data set)
 # one layer of hidden units, and 26 output units (for 26 classes of letters)
-#### Structures defined here used in experiment 4 for high number of hidden units ####
+#### Structures defined here used in experiment 4 for low or high number of hidden units ####
 
 #################
 # hyperparameters
@@ -58,63 +55,24 @@ def sigmoid(z, derivative):
 
 ######################################################################################################
 
-# double check that order for attribute and target matrices are correct
-# for ltr in letters_list_training[:6]: print ltr.value, ltr.attributes
-# print "..."
-# for ltr in letters_list_training[9995:]: print ltr.value, ltr.attributes
-# print "---------"
-
 #### Training data as a 10000x17 matrix seeded with letter attributes ####
 # Rows in data matrices correspond to number of items in minibatch
 # columns correspond to values of these items (values of xi for all items X in training data)
 # numpy stores data in row major order
 X_attributes = np.full( (len(letters_list_training),16), [ltr.attributes for ltr in letters_list_training] )
-# print X_attributes.shape
-# print X_attributes[:6]
-# print "..."
-# print X_attributes[9995:]
-# print "---------"
 
 #### save targets in the order entered into the matrix ####
 X_targets = np.array([list(ltr.value) for ltr in letters_list_training])
-# print X_targets[:6]
-# print "..."
-# print X_targets.shape
-# print X_targets[9995:]
-# print "---------"
-
-## Replaced this preprocessing with scikit implementation, getting div/0 errors
-# print X.mean(axis=0) # get mean of each column
-# print X[1:].mean(axis=0)
-# # standard deviation of columns
-#print X_attributes[1:].std(0)
-# # don't include column 1 (bias inputs) in the preprocessing
-# X_scaled = (X - X[1:].mean(axis=0) / X[1:].std(0))
-# print X_scaled
-##
 
 #### preprocessing input using sklearn package, returns array ####
 # scaled to be Gaussian with zero mean and unit variance along each column (feature)
 X_scaled = preprocessing.scale(X_attributes)
-# print "X attr std:", X_attributes.std(axis=0)
-# print "X scaled std", X_scaled.std(axis=0)
-# print "--------"
-# print "X attr mean", X_attributes.mean(axis=0)
-# print "X scaled mean", X_scaled.mean(axis=0)
-# # X = scale( X, axis=0, with_mean=True, with_std=True, copy=True )
-# print "X scaled:\n", X_scaled
-#
-# print "======================="
-
 
 #### Concatenate scaled data with the 1s needed for bias inputs ####
 # put bias input at the end so we don't need to worry about indexing [1:25]
 # when going from hidden -> output layer
 bias_input = np.full((len(letters_list_training), 1), 1.0)
-# print bias_input.shape
 X = np.concatenate((X_scaled, bias_input), axis=1)
-# print "X:\n", X
-# print X.shape #10000x17
 # The preprocessing module provides a utility class StandardScaler
 # that implements the Transformer API to compute the mean and standard deviation
 # on a training set so you can reapply the same transformation on the testing set
@@ -134,38 +92,14 @@ X_test_targets = np.array([list(ltr.value) for ltr in letters_list_testing])
 # scaled to be Gaussian with zero mean and unit variance along each column (feature)
 # Scale the test data using the μi and σi values
 # computed from the training data (X_attributes), not the test data.
-
-# scaler = preprocessing.StandardScaler().fit(X_attributes)
-# X_test_scaled = scaler.transform(X_test_attributes)
-
 scaler = preprocessing.StandardScaler().fit(X_attributes)
-# print "scaler:", scaler
-#StandardScaler(copy=True, with_mean=True, with_std=True)
-# print "scaler mean:", scaler.mean_
-# print "scaler scale", scaler.scale_
-# print "scaler transform", scaler.transform(X_attributes)
 X_test_scaled = scaler.transform(X_test_attributes)
-
-# compare to X_scaled = preprocessing.scale(X_attributes)
-# print "X test attr std:", X_test_attributes.std(axis=0)
-# print "X test scaled std:", X_test_scaled.std(axis=0)
-# print "--------"
-# print "X test attr mean:", X_test_attributes.mean(axis=0)
-# print "X test scaled mean", X_test_scaled.mean(axis=0)
-# # print X_test_scaled.shape #10000x16
-# print "X test scaled:\n", X_test_scaled #10000x16
-
 
 #### Concatenate scaled data with the 1s needed for bias inputs ####
 # put bias input at the end so we don't need to worry about indexing [1:25]
 # when going from hidden -> output layer
 test_bias_input = np.full((len(letters_list_testing), 1), 1.0)
-# print test_bias_input.shape
 X_test = np.concatenate((X_test_scaled, test_bias_input), axis=1)
-# print X_test 10000x17
-
-# print "X:\n", X
-# print "X_test:\n", X_test
 
 ######################################################################################################
 
@@ -187,6 +121,5 @@ hidden_to_output_weights_n_high = np.random.uniform(low= -.25, high= .25, size=(
 #### Output layer matrix, 1 row by 26 columns for 26 letters of the alphabet ####
 # only 1 row, only need one output (activations) for output layer
 # don't initialize to anything
-# target for properly identified letter is .9, and the rest of the units should be .1
 Y = np.full((1, 26), None)
 
