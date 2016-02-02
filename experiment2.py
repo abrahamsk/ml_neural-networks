@@ -182,8 +182,8 @@ def back_propagation(hidden_activations, output_activations, target, row, eta):
             if(input_to_hidden_weights[j][i] == input_to_hidden_weights_ji_prior):
                 no_change_input_to_hidden_weight += 1
     #check to make sure all weights are being updated
-    if(no_change_input_to_hidden_weight > 0):
-        print "\nnum of weights unchanged input to hidden", no_change_input_to_hidden_weight
+    # if(no_change_input_to_hidden_weight > 0):
+    #     print "\nnum of weights unchanged input to hidden", no_change_input_to_hidden_weight
     # print "input to hidden weights after change\n", input_to_hidden_weights
     # print input_to_hidden_weights
 
