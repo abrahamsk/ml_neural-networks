@@ -379,7 +379,6 @@ def plot_results(training_accuracy_list, testing_accuracy_list):
     plt.show()
 
 
-
 ################################################################################################
 
 #### dict mapping letters to number (index of unit in output row) ####
