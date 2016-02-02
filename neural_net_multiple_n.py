@@ -173,12 +173,14 @@ X_test = np.concatenate((X_test_scaled, test_bias_input), axis=1)
 # Weight matrices have the same number of columns as units in the previous layer
 # and the same number of rows as units in the next layer
 # n is the number of hidden units
-input_to_hidden_weights = np.random.uniform(low= -.25, high= .25, size=(n_high, 17))
+input_to_hidden_weights_n_low = np.random.uniform(low= -.25, high= .25, size=(n_low, 17))
+input_to_hidden_weights_n_high = np.random.uniform(low= -.25, high= .25, size=(n_high, 17))
 # print "input to hidden weights shape", input_to_hidden_weights.shape #4x17
 
 #### Weights from hidden layer to output layer ####
 # 5 columns to allow for bias input (one column of 1s)
-hidden_to_output_weights = np.random.uniform(low= -.25, high= .25, size=(26,n_high+1) )
+hidden_to_output_weights_n_low = np.random.uniform(low= -.25, high= .25, size=(26,n_low+1) )
+hidden_to_output_weights_n_high = np.random.uniform(low= -.25, high= .25, size=(26,n_high+1) )
 
 ######################################################################################################
 

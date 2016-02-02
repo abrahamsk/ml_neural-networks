@@ -11,7 +11,10 @@
 from __future__ import division # want float and not int division
 # import data structures, variables, and neural net from neural_net
 # data structures in the global scope
-from neural_net import *
+
+# use a neural net that has implementations for low and high
+# numbers of hidden weights
+from neural_net_multiple_n import *
 import string
 import matplotlib.pyplot as plt
 
@@ -19,7 +22,7 @@ import matplotlib.pyplot as plt
 ###############
 # function defs
 ###############
-def forward_propagation(row):
+def forward_propagation(row, input_to_hidden_weights, hidden_to_output_weights):
     """
     Function called in train()
     Forward propagate the input through the neural network
@@ -75,14 +78,16 @@ def forward_propagation(row):
 ################################################################################################
 
 # n = number of hidden units
-def back_propagation(hidden_activations, output_activations, target, row, n):
+def back_propagation(hidden_activations, output_activations, target, row, input_to_hidden_weights,
+                     hidden_to_output_weights, n):
     """
     Function called in train()
     The the back-propagation algorithm is used
     during training to update all weights in the network.
     Pass in activation of output layer and
     target letter corresponding to the row that is currently being passed through the neural net
-    :param hidden_activations, output_activations, target, row of input:
+    :param hidden_activations, output_activations, target, row of input
+    input_to_hidden_weights, hidden_to_output_weights, n (low or high):
     :return error:
     """
 
@@ -309,7 +314,7 @@ def back_propagation(hidden_activations, output_activations, target, row, n):
 # 	3. Forward propagate the activations times weights from the hidden layer to the output layer.
 # 	4. At each output unit, determine the error E.
 # 	5. Run the back-propagation algorithm to update all weights in the network.
-def train(num_epochs, n):
+def train(num_epochs, input_to_hidden_weights, hidden_to_output_weights, n):
     """
     train() calls forward_propagation() and back_propagation()
     Run training examples through neural net to train for letter recognition
@@ -321,6 +326,7 @@ def train(num_epochs, n):
          2. Forward propagate the activations times the weights to each node in the hidden layer.
          3. Forward propagate the activations times weights from the hidden layer to the output layer.
          4. Interpret the output layer as a classification.
+    :param num_epochs, input_to_hidden_weights, hidden_to_output_weights, n (low or high number of hidden units):
     """
     epoch_increment = 0
 
@@ -348,7 +354,7 @@ def train(num_epochs, n):
         # for row in X[0:8]:
         for row in X[0:20]:
             hidden_layer = [] # list to hold hidden layer, to pass to back_propagation once it's filled
-            hidden_layer, Y = forward_propagation(row)
+            hidden_layer, Y = forward_propagation(row, input_to_hidden_weights, hidden_to_output_weights)
             # print "Post feedforward call", Y.shape #26x1
             # print "Post feedforward func, output Y", Y
             # print "Hidden layer shape after forward prop", hidden_layer.shape
@@ -357,8 +363,8 @@ def train(num_epochs, n):
             # pass in activations of hidden and output layer and target letter corresponding to the row
             # that is currently being passed through the neural net
             # print X_targets[target_row]
-            back_propagation(hidden_layer, Y, X_targets[target_row], row)
-
+            back_propagation(hidden_layer, Y, X_targets[target_row], row, input_to_hidden_weights,
+                             hidden_to_output_weights, n)
             # move to next row of input data to use new target
             target_row += 1
 
@@ -369,7 +375,8 @@ def train(num_epochs, n):
         # After each epoch, calculate the network's accuracy
         # on the training set and the test set
         # training_accuracy, testing_accuracy = calculate_accuracy(X[0:8], X_test[0:8], epoch_increment)
-        training_accuracy, testing_accuracy = calculate_accuracy(X[0:20], X_test[0:20], epoch_increment)
+        training_accuracy, testing_accuracy = calculate_accuracy(X[0:20], X_test[0:20], epoch_increment,
+                                                                 input_to_hidden_weights, hidden_to_output_weights)
         training_acc_list.append(training_accuracy)
         testing_acc_list.append(testing_accuracy)
 
@@ -385,7 +392,7 @@ def train(num_epochs, n):
 
 ################################################################################################
 
-def calculate_accuracy(training_data, test_data, epoch_num):
+def calculate_accuracy(training_data, test_data, epoch_num, input_to_hidden_weights, hidden_to_output_weights):
     """
     After each epoch, calculate the network's accuracy
     on the training set and the test set
@@ -404,7 +411,7 @@ def calculate_accuracy(training_data, test_data, epoch_num):
     training_letter_actual = []
     target_row = 0
     for row in training_data:
-        hidden_layer, Y_train = forward_propagation(row)
+        hidden_layer, Y_train = forward_propagation(row, input_to_hidden_weights, hidden_to_output_weights)
         training_predictions.append(Y_train)
 
         # map target value to output node (e.g. A == node[0])
@@ -457,7 +464,7 @@ def calculate_accuracy(training_data, test_data, epoch_num):
     # reset counter for iterating through letter targets
     target_row = 0
     for row in test_data:
-        hidden_layer, Y_test = forward_propagation(row)
+        hidden_layer, Y_test = forward_propagation(row, input_to_hidden_weights, hidden_to_output_weights)
         test_predictions.append(Y_test)
 
         # map target value to output node (e.g. A == node[0])
@@ -500,15 +507,11 @@ def calculate_accuracy(training_data, test_data, epoch_num):
 
     return training_accuracy, testing_accuracy
 
-    # print "\ntraining predictions:\n", training_predictions
-    # print "max from list "
-    # print "------------------"
-    # print "\ntest predictions:\n", test_predictions
-
 
 ################################################################################################
 
-def plot_results(training_accuracy_list, testing_accuracy_list):
+def plot_results(training_accuracy_list_low_n, testing_accuracy_list_low_n, training_accuracy_list_high_n,
+                 testing_accuracy_list_high_n):
     """
     Plot results of accuracy computations
 
@@ -517,16 +520,19 @@ def plot_results(training_accuracy_list, testing_accuracy_list):
     # print len(training_accuracy_list)
     # print len(range(1, epochs+1))
 
-    plt.title('Accuracy: Training and Testing, Experiment 1')
-    plt.plot(range(1, epochs+1), training_accuracy_list, 'ro', label='Training')
-    plt.plot(range(1, epochs+1), testing_accuracy_list, 'b^', label='Test')
+    plt.title('Accuracy: Training and Testing, Experiment 3')
+    plt.plot(range(1, epochs+1), training_accuracy_list_low_n, 'ro', label='Training, n=2')
+    plt.plot(range(1, epochs+1), testing_accuracy_list_low_n, 'b^', label='Test, n=2')
+    plt.plot(range(1, epochs+1), training_accuracy_list_high_n, 'go', label='Training, n=8')
+    plt.plot(range(1, epochs+1), testing_accuracy_list_high_n, 'r^', label='Test, n=8')
     plt.xticks(np.arange(0, epochs+2), np.arange(0, epochs+2))
     plt.yticks(np.arange(0,1,0.1), np.arange(0,1,0.1))
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
     plt.grid(True)
     plt.legend(loc='upper right', numpoints=1)
-    # plt.show()
+    plt.show()
+
 
 
 
@@ -569,11 +575,13 @@ testing_acc_list_low_n = []
 training_acc_list_high_n = []
 testing_acc_list_high_n = []
 # run training with low number of hidden units
-training_acc_list_low_n, testing_acc_list_low_n = train(epochs, n_low)
+training_acc_list_low_n, testing_acc_list_low_n = train(epochs, input_to_hidden_weights_n_low,
+                                                        hidden_to_output_weights_n_low, n_low)
 print "training accuracy (low n) list in main:", training_acc_list_low_n
 print "testing accuracy (low n) list in main:", testing_acc_list_low_n
 # run training with high number of hidden units
-training_acc_list_high_n, testing_acc_list_high_n = train(epochs, n_high)
+training_acc_list_high_n, testing_acc_list_high_n = train(epochs, input_to_hidden_weights_n_high,
+                                                          hidden_to_output_weights_n_high, n_high)
 print "training accuracy (high n) list in main:", training_acc_list_high_n
 print "testing accuracy (high n) list in main:", testing_acc_list_high_n
 # plot results of accuracy testing

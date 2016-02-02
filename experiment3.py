@@ -499,11 +499,6 @@ def calculate_accuracy(training_data, test_data, epoch_num):
 
     return training_accuracy, testing_accuracy
 
-    # print "\ntraining predictions:\n", training_predictions
-    # print "max from list "
-    # print "------------------"
-    # print "\ntest predictions:\n", test_predictions
-
 
 ################################################################################################
 

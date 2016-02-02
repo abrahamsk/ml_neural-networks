@@ -14,7 +14,7 @@ from __future__ import division # want float and not int division
 from neural_net import *
 import string
 import matplotlib.pyplot as plt
-
+import timing
 
 ###############
 # function defs
@@ -65,8 +65,9 @@ def forward_propagation(row):
 
     # apply sigmoid function to output layer
     # to get activations at output layer
+    # print "Output results (Y) before sigmoid", output_layer
     Y = sigmoid(output_layer, False)
-    # print "output results", Y
+    # print "Y after sigmoid", Y
     # print "Y shape", Y.shape #26x1
 
     # return activations from hidden and output layers
@@ -498,11 +499,6 @@ def calculate_accuracy(training_data, test_data, epoch_num):
     # print "+++++++++++++++++++"
 
     return training_accuracy, testing_accuracy
-
-    # print "\ntraining predictions:\n", training_predictions
-    # print "max from list "
-    # print "------------------"
-    # print "\ntest predictions:\n", test_predictions
 
 
 ################################################################################################
