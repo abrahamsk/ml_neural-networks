@@ -6,6 +6,7 @@
 # 1/28/16
 import random
 from letter import letter
+import numpy as np
 
 # process data from file
 with open('letter-recognition.data', 'rb') as f:
@@ -31,6 +32,7 @@ for (i, training_data) in enumerate(training_data):
 
 # shuffle training data
 random.shuffle(letters_list_training)
+#np.random.shuffle(letters_list_training)
 # for letter in letters_list_training: print letter.bias_input_plus_attributes
 # for ltr in letters_list_training: print ltr.attributes
 
@@ -42,3 +44,4 @@ for (i, testing_data) in enumerate(testing_data):
 #print letters_list_testing[0].value
 #for letter in letters_list_testing: print letter.value
 random.shuffle(letters_list_testing)
+#np.random.shuffle(letters_list_testing)
