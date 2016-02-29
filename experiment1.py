@@ -16,6 +16,11 @@ import string
 import matplotlib.pyplot as plt
 import timing
 
+import warnings
+warnings.simplefilter(action = "ignore", category = FutureWarning)
+warnings.simplefilter(action = "ignore", category = UserWarning)
+
+
 ###############
 # function defs
 ###############
@@ -232,6 +237,10 @@ def train(num_epochs):
         # iterate through data matrix to operate on individual training instances
         target_row = 0 # count keeps track of which index of target to pass in
         for row in X[0:50]:
+
+            # Select feature subset from genetic algorithm to pass to forward prop #
+            print len(row)
+
             hidden_layer = [] # list to hold hidden layer, to pass to back_propagation once it's filled
             hidden_layer, Y = forward_propagation(row)
             # use back propagation to compute error and adjust weights
@@ -309,6 +318,7 @@ def calculate_accuracy(training_data, test_data, epoch_num):
         target_row += 1
 
     training_accuracy = correct_train_vote/float(len(training_predictions))
+    print "\ntraining accuracy:", training_accuracy
 
     ### Test data ####
     # use forward_propagation to calculate predictions for testing data
@@ -351,6 +361,7 @@ def calculate_accuracy(training_data, test_data, epoch_num):
     # print "correct test vote", correct_test_vote
     # print "len of test predictions", len(test_predictions)
     testing_accuracy = correct_test_vote/float(len(test_predictions))
+    print "test accuracy:", testing_accuracy
     return training_accuracy, testing_accuracy
 
 
@@ -391,12 +402,16 @@ ltr_to_index = dict(zip(string.ascii_uppercase, range(0,26)))
 ######
 # main
 ######
-epochs = 50
-#train the neural net for <epochs> number of epochs
-# using forward and back propagation
-# lists for training and testing accuracies over multiple epochs
-training_acc_list = []
-testing_acc_list = []
-training_acc_list, testing_acc_list = train(epochs)
-# plot results of accuracy testing
-plot_results(training_acc_list, testing_acc_list)
+epochs = 5
+def main():
+    #train the neural net for <epochs> number of epochs
+    # using forward and back propagation
+    # lists for training and testing accuracies over multiple epochs
+    training_acc_list = []
+    testing_acc_list = []
+    training_acc_list, testing_acc_list = train(epochs)
+    # plot results of accuracy testing
+    # plot_results(training_acc_list, testing_acc_list)
+
+if __name__ == "__main__":
+    main()
